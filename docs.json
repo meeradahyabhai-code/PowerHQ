@@ -58,6 +58,12 @@
             ]
           },
           {
+            "group": "Playground",
+            "pages": [
+              "playground"
+            ]
+          },
+          {
             "group": "Reference",
             "pages": [
               "reference/types",
