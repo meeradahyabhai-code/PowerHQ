@@ -15,7 +15,7 @@ In Texas, both rate fields include TDU (Transmission and Distribution Utility) d
 | `advertisedPriceUsdPerKwh` | The effective rate calculated at a static, standard monthly usage — exactly 500, 1,000, or 2,000 kWh flat each month. |
 | `allInRateUsdPerKwh` | The actual per-kWh cost against the customer's real usage pattern, **seasonalized by default**. This is the most accurate reflection of what a customer will pay. |
 
-Both fields fold in TDU delivery, bill credits, and any fixed fees, so the customer's total bill is fully represented by `allInRateUsdPerKwh` in Texas.
+`allInRateUsdPerKwh` folds in TDU delivery, bill credits, and any fixed fees, so the customer's total bill is fully represented by this field in Texas. `advertisedPriceUsdPerKwh` is calculated at a flat, static usage level and does not apply seasonal adjustment.
 
 ## All other markets (PA, OH, IL, NJ, and more)
 

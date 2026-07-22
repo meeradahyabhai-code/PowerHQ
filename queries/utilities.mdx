@@ -1,5 +1,5 @@
 ---
-title: "utilities: Look Up TDUs Serving a ZIP Code"
+title: "utilities: Look Up Electric Utilities Serving a ZIP"
 sidebarTitle: "utilities"
 description: "Retrieve the utility or TDU serving a given ZIP code. Use the returned utility ID to fetch residential plans for that specific provider."
 ---
@@ -53,7 +53,7 @@ You can request residential plans directly inside the `utilities` response by ad
 
 ## Response fields
 
-<ResponseField name="id" type="String">
+<ResponseField name="id" type="ID">
   The utility or TDU identifier (for example, `"ONCOR"`). Pass this value as the `utilityId` argument to `residentialPlans` for precise plan lookup scoped to a specific TDU.
 </ResponseField>
 
@@ -61,7 +61,7 @@ You can request residential plans directly inside the `utilities` response by ad
   The human-readable name of the utility (for example, `"Oncor"`).
 </ResponseField>
 
-<ResponseField name="residentialPlans" type="[ResidentialPlan]">
+<ResponseField name="residentialPlans" type="[ResidentialPlan!]">
   Optional. Residential electricity plans offered under this utility. Include this field in your selection set to retrieve plans in the same query rather than making a separate `residentialPlans` call.
 </ResponseField>
 

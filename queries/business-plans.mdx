@@ -95,6 +95,18 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
     <ResponseField name="name" type="String">
       Full legal name of the supplier.
     </ResponseField>
+
+    <ResponseField name="shortName" type="String">
+      Abbreviated or display name of the supplier, suitable for UI labels. May be `null`.
+    </ResponseField>
+
+    <ResponseField name="logoUrl" type="String">
+      URL of the supplier's logo image.
+    </ResponseField>
+
+    <ResponseField name="registrationId" type="String">
+      Regulatory registration or license ID for the supplier. May be `null` when not available.
+    </ResponseField>
   </Expandable>
 </ResponseField>
 

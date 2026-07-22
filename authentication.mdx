@@ -1,7 +1,7 @@
 ---
-title: "Authenticate Requests to the PowerHQ API"
+title: "API Authentication: Keys, IP Allow-Listing, and Errors"
 sidebarTitle: "Authentication"
-description: "Secure every PowerHQ API request with your API key and a registered server IP — both are required before any call will succeed."
+description: "Secure every PowerHQ API request with your API key and a registered server IP address — both are required before any call will succeed."
 ---
 
 The PowerHQ Plan Data API uses a two-factor authentication model: every request must carry a valid **API key** in an HTTP header, and the request must originate from a **server IP address** that has been registered on the allow-list. Both factors are checked on every call — a valid key from an unregistered IP is still rejected, and a listed IP with a missing or invalid key is equally refused.
