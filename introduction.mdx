@@ -1,0 +1,47 @@
+---
+title: "PowerHQ Plan Data API: Retail Electricity Data for Partners"
+sidebarTitle: "Introduction"
+description: "A single GraphQL API for U.S. retail electricity plans — residential and business pricing, utilities, disclosures, and enrollment for approved partners."
+---
+
+The PowerHQ Plan Data API gives you real-time access to U.S. retail electricity data across every deregulated market PowerHQ supports. With a single GraphQL endpoint you can retrieve residential and business plans, component-level pricing, disclosure documents (EFL, TOS, YRAC, and more), utility (TDU) lookups, and enrollment hand-off URLs. Send a query naming exactly the fields you want; the server returns only those fields as JSON — nothing more, nothing less.
+
+## Environments
+
+Use the **Certification** environment while you build and test your integration. Switch to **Production** when you're ready to serve live traffic. Both environments require the same authentication credentials.
+
+| Environment | Endpoint |
+|---|---|
+| Production | `https://eapi.prod.powerhq.co/graphql` |
+| Certification (staging) | `https://eapi.cert.powerhq.co/graphql` |
+
+## What You Can Query
+
+<CardGroup cols={2}>
+  <Card title="Residential Plans" icon="house" href="/queries/residential-plans">
+    Retrieve available retail electricity plans for a residential address, filtered by ZIP code, utility, monthly usage, and price type.
+  </Card>
+  <Card title="Business Plans" icon="building" href="/queries/business-plans">
+    Fetch commercial electricity plans by ZIP code and annual usage, with support for move-in scenarios and custom start dates.
+  </Card>
+  <Card title="Utilities" icon="bolt" href="/queries/utilities">
+    Look up the transmission and distribution utility (TDU) that serves a given ZIP code — a required input for plan queries in most markets.
+  </Card>
+  <Card title="Next Start Date" icon="calendar" href="/queries/next-start-date">
+    Get the earliest available service start date for a ZIP code, accounting for move-in rules and market-specific scheduling windows.
+  </Card>
+  <Card title="Utility Accounts" icon="file-invoice" href="/queries/utility-accounts">
+    Validate and retrieve an existing utility account by account number and service address for both residential and business customers.
+  </Card>
+  <Card title="Energy Info by State" icon="map" href="/queries/energy-info-by-state">
+    Pull state-level market information — including regulatory context and available rate types — for residential or business segments.
+  </Card>
+</CardGroup>
+
+## Coverage
+
+Examples throughout this documentation use Texas ZIP codes (for example, 75231 and 77002), but the same queries work unchanged across all deregulated markets PowerHQ supports — including Pennsylvania (e.g. 19103), Illinois (e.g. 60602), New Jersey (e.g. 07030), Ohio, and others. Plan availability and supported query parameters vary by market; check the per-query reference pages for market-specific notes.
+
+<Note>
+  API access is available to approved PowerHQ partners only. To receive your API key and have your server IP added to the allow-list, contact your PowerHQ representative. Requests without a valid key or from a non-listed IP are rejected with `403 Forbidden`.
+</Note>

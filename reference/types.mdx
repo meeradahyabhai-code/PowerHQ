@@ -1,0 +1,634 @@
+---
+title: "GraphQL Type Reference for the PowerHQ API"
+sidebarTitle: "Types"
+description: "Complete reference for every GraphQL object type, field, and scalar in the PowerHQ Plan Data API, including nullability rules and field-level notes."
+---
+
+The PowerHQ Plan Data API uses a fully typed GraphQL schema. Every field in a response maps to a concrete type defined in that schema — object types, scalars, or enums. This page documents each object type, its fields, and whether each field is nullable (no `!`) or non-null (marked `!`). Use this reference alongside the [Enums reference](/reference/enums) for the complete picture.
+
+<Note>
+  Forecasted usage is not available in the PowerHQ API. Use `monthlyUsage` (residential) or `annualUsageInkWh` (business) to pass historical consumption when querying plans.
+</Note>
+
+---
+
+## Plan types
+
+### ResidentialPlan
+
+A residential electricity plan available for a given ZIP code and usage level. This is the primary type returned by the `residentialPlans` query.
+
+```graphql
+type ResidentialPlan {
+  id: ID!
+  title: String!
+  description: String!
+  price: Float!
+  term: Int!
+  renewablePercentage: Int!
+  rateType: RateType
+  supplier: Supplier!
+  rates: [PlanRate!]!
+  feeBreakdown: [PlanFee!]!
+  documents: [PlanDocument!]!
+  tags: [PlanTag!]!
+  supplierScores: SupplierScores
+  earlyTerminationFeeUsd: Float
+  earlyTerminationFeeType: EarlyTerminationFeeType
+  isEarlyTerminationPenalized: Boolean!
+  minimumStartDate: Date
+  maximumStartDate: Date
+  timeOfUse: Boolean!
+  isBillCreditPlan: Boolean!
+  isPetFriendly: Boolean!
+  utilityCode: String
+  stateCode: String
+  createdAt: DateTime
+  enrollmentUrl: String!
+  headlessEnrollmentUrl: String!
+}
+```
+
+<ResponseField name="id" type="ID!" required>
+  Unique identifier for the plan.
+</ResponseField>
+
+<ResponseField name="title" type="String!" required>
+  Human-readable plan name as provided by the supplier.
+</ResponseField>
+
+<ResponseField name="description" type="String!" required>
+  Marketing description of the plan.
+</ResponseField>
+
+<ResponseField name="price" type="Float!" required>
+  Effective rate in $/kWh at the requested `monthlyUsage`, seasonalized across a 12-month window.
+</ResponseField>
+
+<ResponseField name="term" type="Int!" required>
+  Contract length in months. `0` typically indicates a month-to-month plan.
+</ResponseField>
+
+<ResponseField name="renewablePercentage" type="Int!" required>
+  Percentage of supply sourced from renewable energy (0–100).
+</ResponseField>
+
+<ResponseField name="rateType" type="RateType">
+  Pricing structure for this plan. See [`RateType`](/reference/enums#ratetype). Nullable — may be absent for plans where the rate structure is unclassified.
+</ResponseField>
+
+<ResponseField name="supplier" type="Supplier!" required>
+  The energy supplier offering this plan. See [`Supplier`](#supplier).
+</ResponseField>
+
+<ResponseField name="rates" type="[PlanRate!]!" required>
+  Pricing at standard usage tiers (e.g., 500 kWh, 1000 kWh, 2000 kWh). May be an empty array if tiered rate data is unavailable.
+</ResponseField>
+
+<ResponseField name="feeBreakdown" type="[PlanFee!]!" required>
+  Itemized list of fees and credits that make up the plan's total rate. May be an empty array.
+</ResponseField>
+
+<ResponseField name="documents" type="[PlanDocument!]!" required>
+  Regulatory and disclosure documents attached to the plan (e.g., EFL, TOS). May be an empty array.
+</ResponseField>
+
+<ResponseField name="tags" type="[PlanTag!]!" required>
+  Descriptive tags applied to the plan (e.g., "best value", "green energy"). May be an empty array.
+</ResponseField>
+
+<ResponseField name="supplierScores" type="SupplierScores">
+  Aggregated ratings for the supplier. Nullable — absent when the supplier has no ratings on file. See [`SupplierScores`](#supplierscores).
+</ResponseField>
+
+<ResponseField name="earlyTerminationFeeUsd" type="Float">
+  Dollar amount of the early termination fee, if applicable. Nullable.
+</ResponseField>
+
+<ResponseField name="earlyTerminationFeeType" type="EarlyTerminationFeeType">
+  How the ETF is calculated. See [`EarlyTerminationFeeType`](/reference/enums#earlyterminationfeetype). Nullable.
+</ResponseField>
+
+<ResponseField name="isEarlyTerminationPenalized" type="Boolean!" required>
+  `true` if leaving this plan early results in a fee or penalty.
+</ResponseField>
+
+<ResponseField name="minimumStartDate" type="Date">
+  Earliest date you can schedule service to begin for this plan. Nullable.
+</ResponseField>
+
+<ResponseField name="maximumStartDate" type="Date">
+  Latest date you can schedule service to begin for this plan. Nullable.
+</ResponseField>
+
+<ResponseField name="timeOfUse" type="Boolean!" required>
+  `true` if the plan uses time-of-use pricing (rates vary by time of day).
+</ResponseField>
+
+<ResponseField name="isBillCreditPlan" type="Boolean!" required>
+  `true` if the plan delivers savings through bill credits rather than a reduced per-kWh rate.
+</ResponseField>
+
+<ResponseField name="isPetFriendly" type="Boolean!" required>
+  `true` if the supplier has a pet-friendly policy or donates to animal welfare causes.
+</ResponseField>
+
+<ResponseField name="utilityCode" type="String">
+  The utility distribution company code for the plan's service territory. Nullable.
+</ResponseField>
+
+<ResponseField name="stateCode" type="String">
+  Two-letter U.S. state code where this plan is available. Nullable.
+</ResponseField>
+
+<ResponseField name="createdAt" type="DateTime">
+  ISO-8601 timestamp of when this plan was added to the PowerHQ catalog. Nullable.
+</ResponseField>
+
+<ResponseField name="enrollmentUrl" type="String!" required>
+  URL to the PowerHQ-hosted enrollment flow for this plan.
+</ResponseField>
+
+<ResponseField name="headlessEnrollmentUrl" type="String!" required>
+  URL to the headless (embeddable) enrollment flow, suitable for iframe integration.
+</ResponseField>
+
+---
+
+### BusinessPlan
+
+A commercial electricity plan returned by the `businessPlans` query. Business plans have a simpler structure than residential plans — detailed rate breakdowns are not included.
+
+```graphql
+type BusinessPlan {
+  id: ID!
+  term: Int!
+  price: Float!
+  monthlyFee: Float!
+  renewablePercentage: Int!
+  supplier: Supplier!
+  agreementUrl: String!
+  enrollmentUrl: String!
+  headlessEnrollmentUrl: String!
+}
+```
+
+<ResponseField name="id" type="ID!" required>
+  Unique identifier for the business plan.
+</ResponseField>
+
+<ResponseField name="term" type="Int!" required>
+  Contract length in months.
+</ResponseField>
+
+<ResponseField name="price" type="Float!" required>
+  Rate in $/kWh based on the requested `annualUsageInkWh`.
+</ResponseField>
+
+<ResponseField name="monthlyFee" type="Float!" required>
+  Fixed monthly customer charge in USD, separate from the energy rate.
+</ResponseField>
+
+<ResponseField name="renewablePercentage" type="Int!" required>
+  Percentage of supply from renewable sources (0–100).
+</ResponseField>
+
+<ResponseField name="supplier" type="Supplier!" required>
+  The supplier offering this plan. See [`Supplier`](#supplier).
+</ResponseField>
+
+<ResponseField name="agreementUrl" type="String!" required>
+  URL to the commercial service agreement document.
+</ResponseField>
+
+<ResponseField name="enrollmentUrl" type="String!" required>
+  URL to the PowerHQ-hosted enrollment flow for this business plan.
+</ResponseField>
+
+<ResponseField name="headlessEnrollmentUrl" type="String!" required>
+  URL to the headless enrollment flow, suitable for iframe integration.
+</ResponseField>
+
+---
+
+## Pricing types
+
+### PlanRate
+
+A single row in a plan's tiered pricing table, showing the all-in cost and estimated bill at a specific monthly usage level.
+
+```graphql
+type PlanRate {
+  usageKwh: Int!
+  advertisedPriceUsdPerKwh: Float!
+  allInRateUsdPerKwh: Float!
+  avgMonthlyBillUsd: Float!
+}
+```
+
+<ResponseField name="usageKwh" type="Int!" required>
+  Monthly usage level (kWh) this rate row applies to (e.g., `500`, `1000`, `2000`).
+</ResponseField>
+
+<ResponseField name="advertisedPriceUsdPerKwh" type="Float!" required>
+  The headline rate advertised by the supplier at this usage level, in $/kWh.
+</ResponseField>
+
+<ResponseField name="allInRateUsdPerKwh" type="Float!" required>
+  The fully loaded rate including all fees and credits at this usage level, in $/kWh. Use this for accurate cost comparisons.
+</ResponseField>
+
+<ResponseField name="avgMonthlyBillUsd" type="Float!" required>
+  Estimated average monthly bill in USD at this usage level.
+</ResponseField>
+
+---
+
+### PlanFee
+
+A single line item in a plan's fee or credit breakdown. Use `feeBreakdown` on `ResidentialPlan` to enumerate all charges that compose the total rate.
+
+```graphql
+type PlanFee {
+  feeType: FeeType!
+  amountUsd: Float!
+  applicability: FeeApplicability!
+  threshold: Float
+  rules: [RuleEntry!]
+}
+```
+
+<ResponseField name="feeType" type="FeeType!" required>
+  The category of this fee or credit. See [`FeeType`](/reference/enums#feetype).
+</ResponseField>
+
+<ResponseField name="amountUsd" type="Float!" required>
+  The monetary amount of this fee or credit in USD. Negative values represent credits.
+</ResponseField>
+
+<ResponseField name="applicability" type="FeeApplicability!" required>
+  How and when this fee applies (e.g., per kWh, monthly, above/below a usage threshold). See [`FeeApplicability`](/reference/enums#feeapplicability).
+</ResponseField>
+
+<ResponseField name="threshold" type="Float">
+  Usage threshold in kWh at which this fee's applicability condition activates. Nullable — only present when `applicability` involves a usage threshold (e.g., `MONTHLY_BELOW_USAGE`).
+</ResponseField>
+
+<ResponseField name="rules" type="[RuleEntry!]">
+  Additional structured key-value rules governing this fee. Nullable — may be absent or an empty array for simple fees.
+</ResponseField>
+
+---
+
+### RuleEntry
+
+A key-value pair attached to a `PlanFee` to express supplementary conditions or metadata for that fee.
+
+```graphql
+type RuleEntry {
+  key: String!
+  value: String!
+}
+```
+
+<ResponseField name="key" type="String!" required>
+  The name of the rule or condition (e.g., `"minUsage"`, `"applyMonths"`).
+</ResponseField>
+
+<ResponseField name="value" type="String!" required>
+  The value for the rule key.
+</ResponseField>
+
+---
+
+## Supporting types
+
+### Supplier
+
+The retail electricity provider (REP) offering a plan.
+
+```graphql
+type Supplier {
+  id: ID!
+  name: String!
+  shortName: String
+  logoUrl: String!
+  registrationId: String
+}
+```
+
+<ResponseField name="id" type="ID!" required>
+  Unique identifier for the supplier in the PowerHQ system.
+</ResponseField>
+
+<ResponseField name="name" type="String!" required>
+  Full legal or trade name of the supplier.
+</ResponseField>
+
+<ResponseField name="shortName" type="String">
+  Abbreviated display name, suitable for space-constrained UI elements. Nullable.
+</ResponseField>
+
+<ResponseField name="logoUrl" type="String!" required>
+  URL to the supplier's logo image (PNG or SVG).
+</ResponseField>
+
+<ResponseField name="registrationId" type="String">
+  Regulatory registration or license number for the supplier. Nullable.
+</ResponseField>
+
+---
+
+### SupplierScores
+
+Aggregated ratings for a supplier across several dimensions. The entire `supplierScores` object is nullable on `ResidentialPlan` — it is absent when the supplier has no ratings on file. Individual category fields within this type may also be independently null.
+
+```graphql
+type SupplierScores {
+  energyBotRating: Float
+  plansAndRates: Float
+  customerService: Float
+  renewablePlans: Float
+  pucRating: Float
+}
+```
+
+<ResponseField name="energyBotRating" type="Float">
+  Overall EnergyBot composite score for the supplier. Nullable.
+</ResponseField>
+
+<ResponseField name="plansAndRates" type="Float">
+  Score reflecting the quality and competitiveness of the supplier's plan offerings. Nullable.
+</ResponseField>
+
+<ResponseField name="customerService" type="Float">
+  Score based on customer service feedback and complaints. Nullable.
+</ResponseField>
+
+<ResponseField name="renewablePlans" type="Float">
+  Score reflecting the availability and quality of the supplier's renewable energy options. Nullable.
+</ResponseField>
+
+<ResponseField name="pucRating" type="Float">
+  Rating derived from Public Utility Commission complaint data. Nullable.
+</ResponseField>
+
+---
+
+## Document & tag types
+
+### PlanDocument
+
+A regulatory or disclosure document associated with a plan.
+
+```graphql
+type PlanDocument {
+  type: LinkType!
+  url: String!
+  title: String
+}
+```
+
+<ResponseField name="type" type="LinkType!" required>
+  The category of document (e.g., `EFL`, `TOS`). See [`LinkType`](/reference/enums#linktype).
+</ResponseField>
+
+<ResponseField name="url" type="String!" required>
+  Direct URL to the document (PDF or web page).
+</ResponseField>
+
+<ResponseField name="title" type="String">
+  Human-readable display name for the document. Nullable.
+</ResponseField>
+
+---
+
+### PlanTag
+
+A descriptive label applied to a plan, used for surfacing features, promotions, or recommendation signals in a UI.
+
+```graphql
+type PlanTag {
+  key: String!
+  value: String
+  label: String
+  reasons: [String!]
+}
+```
+
+<ResponseField name="key" type="String!" required>
+  Machine-readable tag identifier (e.g., `"bestValue"`, `"greenEnergy"`).
+</ResponseField>
+
+<ResponseField name="value" type="String">
+  Optional structured value associated with the tag key. Nullable.
+</ResponseField>
+
+<ResponseField name="label" type="String">
+  Human-readable display label for the tag. Nullable.
+</ResponseField>
+
+<ResponseField name="reasons" type="[String!]">
+  List of explanatory strings describing why this tag was applied to the plan. Nullable — may be absent or empty.
+</ResponseField>
+
+---
+
+## Utility types
+
+### Utility
+
+A utility distribution company (wires company) that delivers electricity in a given service territory.
+
+```graphql
+type Utility {
+  id: ID!
+  name: String!
+  residentialPlans: [ResidentialPlan!]
+}
+```
+
+<ResponseField name="id" type="ID!" required>
+  Unique identifier for the utility.
+</ResponseField>
+
+<ResponseField name="name" type="String!" required>
+  Full name of the utility company.
+</ResponseField>
+
+<ResponseField name="residentialPlans" type="[ResidentialPlan!]">
+  Residential plans available in this utility's territory. Nullable — may be absent when queried via `utilities` without plan data.
+</ResponseField>
+
+---
+
+### UtilityAccount
+
+A customer account record on file with a utility, returned by the `utilityAccounts` query.
+
+```graphql
+type UtilityAccount {
+  id: ID!
+  accountNumber: String
+  accountStatus: AccountStatus
+  serviceAddress: Address!
+  displayAddress: String
+  isBusiness: Boolean!
+  utilityCode: String!
+}
+```
+
+<ResponseField name="id" type="ID!" required>
+  Unique identifier for this utility account.
+</ResponseField>
+
+<ResponseField name="accountNumber" type="String">
+  The account number on file with the utility. Nullable — may not be returned in all lookups.
+</ResponseField>
+
+<ResponseField name="accountStatus" type="AccountStatus">
+  Current status of the account. See [`AccountStatus`](/reference/enums#accountstatus). Nullable.
+</ResponseField>
+
+<ResponseField name="serviceAddress" type="Address!" required>
+  The physical address where electricity is delivered. See [`Address`](#address).
+</ResponseField>
+
+<ResponseField name="displayAddress" type="String">
+  Formatted single-line address string for display purposes. Nullable.
+</ResponseField>
+
+<ResponseField name="isBusiness" type="Boolean!" required>
+  `true` if this is a commercial/business account.
+</ResponseField>
+
+<ResponseField name="utilityCode" type="String!" required>
+  Code identifying the utility company associated with this account.
+</ResponseField>
+
+---
+
+### Address
+
+A U.S. service address.
+
+```graphql
+type Address {
+  street: String!
+  street2: String
+  city: String!
+  state: String!
+  zipCode: String!
+}
+```
+
+<ResponseField name="street" type="String!" required>
+  Primary street address line.
+</ResponseField>
+
+<ResponseField name="street2" type="String">
+  Secondary address line (apartment, suite, unit). Nullable.
+</ResponseField>
+
+<ResponseField name="city" type="String!" required>
+  City name.
+</ResponseField>
+
+<ResponseField name="state" type="String!" required>
+  Two-letter U.S. state abbreviation.
+</ResponseField>
+
+<ResponseField name="zipCode" type="String!" required>
+  Five-digit U.S. ZIP code.
+</ResponseField>
+
+---
+
+## Info types
+
+### EnergyInfo
+
+Statewide electricity market statistics returned by the `energyInfoByState` query.
+
+```graphql
+type EnergyInfo {
+  averagePrice: Float!
+  stateCode: String!
+  stateName: String!
+  electricityGenerationPercentage: ElectricityGenerationPercentage
+}
+```
+
+<ResponseField name="averagePrice" type="Float!" required>
+  Average residential electricity price in the state, in $/kWh.
+</ResponseField>
+
+<ResponseField name="stateCode" type="String!" required>
+  Two-letter U.S. state code.
+</ResponseField>
+
+<ResponseField name="stateName" type="String!" required>
+  Full state name.
+</ResponseField>
+
+<ResponseField name="electricityGenerationPercentage" type="ElectricityGenerationPercentage">
+  Breakdown of the state's electricity generation mix. Nullable — may be absent if generation data is unavailable. See [`ElectricityGenerationPercentage`](#electricitygenerationpercentage).
+</ResponseField>
+
+---
+
+### ElectricityGenerationPercentage
+
+The renewable vs. non-renewable split for a state's electricity generation.
+
+```graphql
+type ElectricityGenerationPercentage {
+  nonRenewableGeneration: Int!
+  renewableGeneration: Int!
+}
+```
+
+<ResponseField name="nonRenewableGeneration" type="Int!" required>
+  Percentage of the state's electricity generated from non-renewable sources (0–100).
+</ResponseField>
+
+<ResponseField name="renewableGeneration" type="Int!" required>
+  Percentage of the state's electricity generated from renewable sources (0–100).
+</ResponseField>
+
+---
+
+### PlanNextStartDate
+
+The next available start date for plan enrollment in a given ZIP code, along with any business plans available from that date. Returned by the `nextStartDate` query.
+
+```graphql
+type PlanNextStartDate {
+  nextStartDate: Date!
+  businessPlans: [BusinessPlan!]
+}
+```
+
+<ResponseField name="nextStartDate" type="Date!" required>
+  The earliest date (YYYY-MM-DD) on which new service can begin in the requested ZIP code. Use this value to validate or pre-fill `startDate` when enrolling in a `businessPlan`.
+</ResponseField>
+
+<ResponseField name="businessPlans" type="[BusinessPlan!]">
+  Business plans available starting from `nextStartDate`. Nullable — may be absent or empty if no business plans are available.
+</ResponseField>
+
+---
+
+## Scalars
+
+The PowerHQ API defines three custom scalars in addition to the built-in GraphQL scalars (`String`, `Int`, `Float`, `Boolean`, `ID`).
+
+| Scalar | Format | Example |
+|--------|--------|---------|
+| `Date` | `YYYY-MM-DD` — calendar date with no time component | `"2026-07-16"` |
+| `DateTime` | ISO-8601 date-time string | `"2026-07-16T09:02:14.983"` |
+| `Long` | 64-bit integer — use when values exceed JavaScript's safe integer range | `1200000` |
+
+<Tip>
+  When passing `Date` values as query variables (e.g., `startDate` in `businessPlans`), always format them as `"YYYY-MM-DD"` strings. The API will return a validation error if `startDate` is earlier than the minimum allowed start date — use the `nextStartDate` query to retrieve that minimum before constructing your enrollment flow.
+</Tip>

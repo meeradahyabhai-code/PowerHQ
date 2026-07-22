@@ -1,0 +1,143 @@
+---
+title: "GraphQL Enum Reference for the PowerHQ API"
+sidebarTitle: "Enums"
+description: "Reference for all GraphQL enums in the PowerHQ Plan Data API, covering rate types, fee categories, document link types, and utility account statuses."
+---
+
+The PowerHQ Plan Data API uses several enum types to represent discrete, well-defined sets of values across plan rates, fee structures, document categories, and account status. Each enum value is a string constant returned exactly as shown — your integration should handle unknown values gracefully in case new values are added in future API versions.
+
+---
+
+## RateType
+
+Used on `ResidentialPlan.rateType`. Describes the pricing structure of a residential electricity plan.
+
+| Value | Description |
+|-------|-------------|
+| `FIXED` | Rate is locked for the full contract term, regardless of market conditions. |
+| `VARIABLE` | Rate fluctuates monthly based on wholesale electricity market prices. |
+| `PREPAID` | Pay-as-you-go pricing — customers load credit in advance rather than paying in arrears. |
+| `SUBSCRIPTION` | Flat monthly subscription fee covers electricity usage up to a defined threshold. |
+
+<Note>
+  `rateType` is nullable on `ResidentialPlan`. A `null` value means the rate structure for this plan has not been classified in the PowerHQ catalog.
+</Note>
+
+---
+
+## EarlyTerminationFeeType
+
+Used on `ResidentialPlan.earlyTerminationFeeType`. Describes how an early termination fee (ETF) is calculated when a customer leaves a fixed-term plan before its end date.
+
+| Value | Description |
+|-------|-------------|
+| `FIXED` | A single one-time dollar amount is charged upon early cancellation, regardless of how much time remains on the contract. |
+| `PER_MONTH_REMAINING_PERIOD` | The fee is multiplied by the number of full months remaining on the contract at the time of cancellation. |
+| `NONE` | No early termination fee applies — the customer may leave the plan at any time without penalty. |
+| `UNKNOWN` | The ETF structure has not been determined or disclosed for this plan. |
+
+<Tip>
+  Check `isEarlyTerminationPenalized` (a non-null `Boolean` on `ResidentialPlan`) for a quick yes/no signal before inspecting `earlyTerminationFeeType` and `earlyTerminationFeeUsd`.
+</Tip>
+
+---
+
+## AccountStatus
+
+Used on `UtilityAccount.accountStatus`. Represents the current state of a utility service account.
+
+| Value | Description |
+|-------|-------------|
+| `ACTIVE` | The account is active and electricity service is currently energized at the address. |
+| `INACTIVE` | The account exists in the utility's system but is not currently active (e.g., prior tenant account). |
+| `DE_ENERGIZED` | Electricity service has been physically disconnected at the meter for this account. |
+
+<Note>
+  `accountStatus` is nullable on `UtilityAccount`. A `null` value means the status could not be determined from the utility's records.
+</Note>
+
+---
+
+## LinkType
+
+Used on `PlanDocument.type`. Identifies the category of a regulatory or disclosure document attached to a plan.
+
+| Value | Description |
+|-------|-------------|
+| `EFL` | Electricity Facts Label — a standardized one-page disclosure required for retail plans in Texas. |
+| `TOS` | Terms of Service — the full legal contract between the customer and the supplier. |
+| `YRAC` | Your Rights as a Customer — a Texas-mandated consumer rights document. |
+| `ENROLLMENT` | A link to the supplier's own enrollment website, distinct from the PowerHQ-hosted enrollment flow. |
+| `PREPAID_DISCLOSURE_STATEMENT` | Disclosure statement specific to prepaid electricity plans. |
+| `CONTRACT_SUMMARY` | Condensed contract summary document, required in Pennsylvania and certain other states. |
+| `ENVIRONMENTAL_DISCLOSURE` | Document disclosing the fuel mix and environmental attributes of the plan's electricity supply. |
+| `ARBITRATION_ADDENDUM` | Addendum describing the binding arbitration clause and process. |
+| `COMM_POLICY` | Communication policy document describing how the supplier contacts customers. |
+| `PAYMENT_TERMS` | Document specifying the supplier's payment terms, due dates, and late-payment policies. |
+
+---
+
+## FeeApplicability
+
+Used on `PlanFee.applicability`. Describes when and how a specific fee or credit on a plan applies relative to customer usage.
+
+| Value | Description |
+|-------|-------------|
+| `PER_KWH` | Charged for every kWh consumed during the billing period, with no usage threshold. |
+| `MONTHLY` | A flat charge applied once per billing month, regardless of usage. |
+| `PER_KWH_BELOW_USAGE` | A per-kWh rate that applies only when monthly usage is below the `threshold` value. |
+| `MONTHLY_BELOW_USAGE` | A flat monthly charge that applies only when usage falls below the `threshold` value. |
+| `MONTHLY_ABOVE_USAGE` | A flat monthly charge that applies only when usage exceeds the `threshold` value. |
+| `CREDIT_MONTHLY_ABOVE_USAGE` | A monthly credit (negative charge) applied when usage exceeds the `threshold` value. |
+| `CREDIT_MONTHLY_BELOW_USAGE` | A monthly credit (negative charge) applied when usage falls below the `threshold` value. |
+| `SCHEDULE` | Charge is applied according to a supplier-defined schedule as specified in the service agreement. |
+| `DEVICE` | Charge associated with a specific device enrolled on the plan (e.g., smart thermostat, EV charger). |
+| `PER_KW` | Charge based on peak kilowatt demand rather than total kWh consumption. |
+
+<Note>
+  When `applicability` includes a usage threshold (e.g., `MONTHLY_BELOW_USAGE`, `PER_KWH_BELOW_USAGE`), the `threshold` field on `PlanFee` contains the kWh value at which the condition activates.
+</Note>
+
+---
+
+## FeeType
+
+Used on `PlanFee.feeType`. Identifies the nature of a specific fee or credit line item in a plan's `feeBreakdown`. Fee types are grouped into residential and commercial categories.
+
+### Residential fee types
+
+| Value | Description |
+|-------|-------------|
+| `ENERGY_CHARGE` | The core per-kWh energy supply charge from the supplier. |
+| `UTILITY_PASS_THRU` | Utility delivery, transmission, or distribution charges passed through directly to the customer. |
+| `MSDF_UTILITY_PASS_THRU` | Meter Systems Development Fee — a specific utility pass-through charge for metering infrastructure. |
+| `BASE_CHARGE` | A fixed monthly base or customer charge applied regardless of usage. |
+| `BILL_CREDIT` | A recurring credit applied to the bill, typically tied to usage thresholds or promotional terms. |
+| `MIN_USAGE_CHARGE` | An additional charge applied when monthly usage falls below a defined minimum. |
+| `MAX_USAGE_CHARGE` | An additional charge applied when monthly usage exceeds a defined maximum. |
+| `CREDIT_PER_KWH` | A per-kWh credit that reduces the effective energy rate. |
+| `UPCHARGE_PER_KWH` | An additional per-kWh surcharge applied on top of the base energy rate. |
+
+### Commercial (business) fee types
+
+Commercial fee types are prefixed with `BUS_` and appear in business plan fee breakdowns.
+
+| Value | Description |
+|-------|-------------|
+| `BUS_CUSTOMER_CHARGE` | Fixed monthly customer charge for commercial accounts. |
+| `BUS_METERING_CHARGE` | Monthly charge for metering services on commercial accounts. |
+| `BUS_INCOME_TAX_REFUND` | Income tax refund component passed through to business customers. |
+| `BUS_DISTRIBUTION_SYSTEM_CHARGE` | Charge for use of the utility's distribution infrastructure. |
+| `BUS_FRANCHISE_CHARGE` | Franchise fee assessed by local government and passed through to business customers. |
+| `BUS_ASSET_RECOVER_VEG_MGMT_CHARGE` | Asset recovery and vegetation management surcharge. |
+| `BUS_NUCLEAR_DECOM_CHARGE` | Nuclear decommissioning surcharge passed through to business customers. |
+| `BUS_TCRF` | Transmission Cost Recovery Factor — a regulated charge for transmission infrastructure costs. |
+| `BUS_DCRF` | Distribution Cost Recovery Factor — a regulated charge for distribution infrastructure costs. |
+| `BUS_RCE` | Retail Competition and Energy charge for business accounts. |
+| `BUS_RCE_SURCHARGE` | Surcharge applied in addition to the base RCE charge. |
+| `BUS_SRC` | System Restoration Charge to fund grid restoration after outages. |
+| `BUS_ADFIT` | Advanced Demand Fee and Infrastructure Tariff component. |
+| `BUS_ENERGY_EFFICIENCY_FACTOR` | State-mandated energy efficiency program charge. |
+| `BUS_TRANSITION_CHARGE` | Stranded cost recovery charge from the deregulation transition period. |
+| `BUS_TEMPORARY_EMERGENCY_CHARGE` | Temporary surcharge levied during declared energy emergencies. |
+| `BUS_DELIVERY_SERVICE_CHARGE` | Charge for physical electricity delivery services on commercial accounts. |

@@ -1,0 +1,72 @@
+{
+  "projectType": "api-service",
+  "projectName": "PowerHQ Plan Data API",
+  "projectDescription": "A single GraphQL API for querying U.S. retail electricity plans, pricing, utilities, and enrollment across deregulated markets.",
+  "theme": "luma",
+  "primaryColor": "#1A3A5C",
+  "lightColor": "#EAF1F8",
+  "darkColor": "#0D1F33",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "authentication"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/pricing",
+              "concepts/enrollment",
+              "concepts/disclosure-documents"
+            ]
+          },
+          {
+            "group": "Queries",
+            "pages": [
+              "queries/residential-plans",
+              "queries/business-plans",
+              "queries/utilities",
+              "queries/next-start-date",
+              "queries/utility-accounts",
+              "queries/energy-info-by-state"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/types",
+              "reference/enums",
+              "reference/errors"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Residential and business electricity plan lookup by ZIP code or utility ID",
+    "Component-level pricing with advertised and all-in rates at 500/1000/2000 kWh",
+    "Utility (TDU) lookup for any supported deregulated market ZIP code",
+    "Partner-stamped enrollment URLs (hosted and headless/embeddable)",
+    "Disclosure document links (EFL, TOS, YRAC, CONTRACT_SUMMARY, and more)",
+    "Utility service account search by address or account number",
+    "State-level average energy rate and generation mix data",
+    "Earliest available service start date lookup for switch or move-in",
+    "Coverage across TX, PA, OH, IL, NJ, and other deregulated U.S. markets"
+  ],
+  "publicApiSurface": [
+    "residentialPlans(zipCode, utilityId, monthlyUsage, priceType)",
+    "businessPlans(zipCode, annualUsageInkWh, isMoveIn, startDate)",
+    "utilities(zipCode)",
+    "nextStartDate(zipCode, isMoveIn)",
+    "utilityAccounts(accountNumber, street, city, state, zipCode, isBusiness)",
+    "energyInfoByState(stateCode, isBusiness)"
+  ]
+}

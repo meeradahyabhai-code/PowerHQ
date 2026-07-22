@@ -1,0 +1,70 @@
+---
+title: "utilities: Look Up TDUs Serving a ZIP Code"
+sidebarTitle: "utilities"
+description: "Retrieve the utility or TDU serving a given ZIP code. Use the returned utility ID to fetch residential plans for that specific provider."
+---
+
+The `utilities` query returns the electric utility or Transmission and Distribution Utility (TDU) serving a given ZIP code. Run this query first whenever you need to resolve a valid `utilityId` before fetching residential plans — it ensures you're querying plans for the exact provider that serves your customer's address.
+
+## Parameters
+
+<ParamField query="zipCode" type="String" required>
+  The five-digit ZIP code to look up. Returns all utilities serving that ZIP code.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  utilities(zipCode: "75231") {
+    id
+    name
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "utilities": [
+      { "id": "ONCOR", "name": "Oncor" }
+    ]
+  }
+}
+```
+
+## Nesting residential plans
+
+You can request residential plans directly inside the `utilities` response by adding a `residentialPlans` selection to your query. This lets you retrieve the utility and its available plans in a single round trip.
+
+```graphql
+{
+  utilities(zipCode: "75231") {
+    id
+    name
+    residentialPlans {
+      title
+      price
+      term
+    }
+  }
+}
+```
+
+## Response fields
+
+<ResponseField name="id" type="String">
+  The utility or TDU identifier (for example, `"ONCOR"`). Pass this value as the `utilityId` argument to `residentialPlans` for precise plan lookup scoped to a specific TDU.
+</ResponseField>
+
+<ResponseField name="name" type="String">
+  The human-readable name of the utility (for example, `"Oncor"`).
+</ResponseField>
+
+<ResponseField name="residentialPlans" type="[ResidentialPlan]">
+  Optional. Residential electricity plans offered under this utility. Include this field in your selection set to retrieve plans in the same query rather than making a separate `residentialPlans` call.
+</ResponseField>
+
+<Tip>
+  Use the `id` returned here as the `utilityId` argument when calling [`residentialPlans`](/queries/residential-plans). Scoping plan queries to a specific TDU produces more accurate results and avoids cross-utility plan matches.
+</Tip>

@@ -1,47 +1,137 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with the PowerHQ Plan Data API"
+sidebarTitle: "Quickstart"
+description: "Make your first PowerHQ API call in minutes — fetch live utility data and real residential electricity plan pricing from a single GraphQL endpoint."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+This guide walks you through everything you need to go from zero to live plan data. By the end you'll have sent your first request to the API, retrieved the utility serving a ZIP code, and fetched real residential electricity plans complete with pricing tiers and an enrollment URL.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+
+  <Step title="Get your credentials">
+    The PowerHQ Plan Data API is available to approved partners only. Before you can make any request, you need two things:
+
+    1. **An API key** — a static secret you'll send on every request in the `x-api-key` HTTP header.
+    2. **IP allow-listing** — your server's egress IP address must be registered with PowerHQ before any request will succeed.
+
+    Contact your PowerHQ representative to receive your API key and to submit the static IP address(es) your integration will use. Requests from a non-listed IP are rejected with `403 Forbidden` even if the key is valid.
+  </Step>
+
+  <Step title="Choose your environment">
+    PowerHQ provides two identical endpoints. Use **Certification** while you build and test your integration, then point to **Production** when you go live.
+
+    | Environment | Endpoint |
+    |---|---|
+    | Production | `https://eapi.prod.powerhq.co/graphql` |
+    | Certification (staging) | `https://eapi.cert.powerhq.co/graphql` |
+
+    All code examples in this guide use the Certification endpoint. Swap the hostname when you're ready for production traffic.
+  </Step>
+
+  <Step title="Send your first request">
+    Start with a `utilities` query — it's the simplest call and confirms that your key and IP are both working. This example looks up the transmission and distribution utility (TDU) for ZIP code 75231 (Dallas, TX).
 
     ```bash
-    npm install your-package
+    curl -s -X POST https://eapi.cert.powerhq.co/graphql \
+      -H "x-api-key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
     ```
+
+    A successful response looks like this:
+
+    ```json
+    {
+      "data": {
+        "utilities": [
+          {
+            "id": "ONCOR",
+            "name": "Oncor"
+          }
+        ]
+      }
+    }
+    ```
+
+    The `id` value (here `"ONCOR"`) is the `utilityId` you'll pass in subsequent plan queries for addresses in this service territory.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+
+  <Step title="Fetch residential plans">
+    Now query for residential plans. The example below requests plans for ZIP code 77002 (Houston, TX) sized for a customer using 1,000 kWh per month. It asks for the plan title, base price, contract term, rate type, supplier name, tiered rate details, and a ready-to-use enrollment URL.
+
+    ```graphql
+    {
+      residentialPlans(zipCode: "77002", monthlyUsage: 1000) {
+        title
+        price
+        term
+        rateType
+        supplier {
+          name
+        }
+        rates {
+          usageKwh
+          allInRateUsdPerKwh
+          avgMonthlyBillUsd
+        }
+        headlessEnrollmentUrl
+      }
+    }
+    ```
+
+    Send it with curl:
 
     ```bash
-    your-cli init
+    curl -s -X POST https://eapi.cert.powerhq.co/graphql \
+      -H "x-api-key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "query": "{ residentialPlans(zipCode: \"77002\", monthlyUsage: 1000) { title price term rateType supplier { name } rates { usageKwh allInRateUsdPerKwh avgMonthlyBillUsd } headlessEnrollmentUrl } }"
+      }'
     ```
-  </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
+    The response includes one or more plans. Here's an example entry:
+
+    ```json
+    {
+      "data": {
+        "residentialPlans": [
+          {
+            "title": "12 Month (No Min Usage Fee)",
+            "price": 0.138,
+            "term": 12,
+            "rateType": "FIXED",
+            "supplier": { "name": "Constellation NewEnergy, Inc." },
+            "rates": [
+              { "usageKwh": 500,  "allInRateUsdPerKwh": 0.1428,  "avgMonthlyBillUsd": 71.4 },
+              { "usageKwh": 1000, "allInRateUsdPerKwh": 0.1379,  "avgMonthlyBillUsd": 137.9 },
+              { "usageKwh": 2000, "allInRateUsdPerKwh": 0.13545, "avgMonthlyBillUsd": 270.9 }
+            ],
+            "headlessEnrollmentUrl": "https://www.cert.powerhq.co/partner-app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=RESIDENTIAL_PARTNER&plan_id=7a8c1d9f-f83a-4322-850f-c6939ccf4fb3&zip_code=77002&ref=YOUR_PARTNER_CODE"
+          }
+        ]
+      }
+    }
     ```
+
+    The `headlessEnrollmentUrl` takes a customer directly into the enrollment flow for that plan. Replace `YOUR_PARTNER_CODE` with the partner code provided by your PowerHQ representative before surfacing these URLs to customers.
   </Step>
+
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Next Steps
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn how the two-factor auth model works, how to rotate your key, and how to handle 403 errors in production.
+  </Card>
+  <Card title="Reading Pricing" icon="chart-line" href="/concepts/pricing">
+    Understand the difference between `price`, `allInRateUsdPerKwh`, and `avgMonthlyBillUsd`, and when to display each.
+  </Card>
+  <Card title="Residential Plans Query" icon="house" href="/queries/residential-plans">
+    Full reference for every parameter and return field on the `residentialPlans` query.
+  </Card>
+  <Card title="All Queries" icon="book" href="/queries/business-plans">
+    Browse the complete query reference — business plans, utilities, start dates, accounts, and more.
+  </Card>
+</CardGroup>

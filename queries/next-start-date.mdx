@@ -1,0 +1,49 @@
+---
+title: "nextStartDate: Get the Earliest Service Start Date"
+sidebarTitle: "nextStartDate"
+description: "Fetch the earliest available electricity service start date for a ZIP code. Supports both move-in and switch scenarios before submitting a plan enrollment."
+---
+
+The `nextStartDate` query returns the earliest date a customer can begin electricity service for a given ZIP code. Call this query before submitting a `businessPlans` query that accepts a `startDate` argument — it tells you the minimum valid date so you can avoid validation errors caused by requesting a start date that is too soon.
+
+## Parameters
+
+<ParamField query="zipCode" type="String" required>
+  The five-digit ZIP code for which to check the earliest available start date.
+</ParamField>
+
+<ParamField query="isMoveIn" type="Boolean">
+  Set to `true` when the customer is establishing new service at a location (move-in). Set to `false`, or omit the argument, when the customer is switching providers at an address that already has active service. Move-in and switch scenarios typically resolve to different earliest start dates.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  nextStartDate(zipCode: "75070", isMoveIn: false) {
+    nextStartDate
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "nextStartDate": { "nextStartDate": "2026-07-21" }
+  }
+}
+```
+
+## Response fields
+
+<ResponseField name="nextStartDate" type="Date">
+  The earliest available service start date, returned in `YYYY-MM-DD` format (for example, `"2026-07-21"`).
+</ResponseField>
+
+<ResponseField name="businessPlans" type="[BusinessPlan]">
+  Optionally include business plans that are available starting from this date by adding a `businessPlans` selection to your query.
+</ResponseField>
+
+<Note>
+  If you pass a `startDate` to `businessPlans` that falls before the resolved minimum returned by `nextStartDate`, the API returns a validation error. Always call `nextStartDate` first and use the returned date as the floor value for any `startDate` argument you provide downstream.
+</Note>

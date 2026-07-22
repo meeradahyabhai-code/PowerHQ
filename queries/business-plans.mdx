@@ -1,0 +1,115 @@
+---
+title: "businessPlans: Fetch Commercial Electricity Plans by ZIP"
+sidebarTitle: "businessPlans"
+description: "Query commercial electricity plans for a U.S. business location by ZIP code, with usage-based pricing, monthly fees, and partner-stamped enrollment URLs."
+---
+
+The `businessPlans` query returns available retail electricity plans for a U.S. commercial service location identified by ZIP code. Provide your customer's annual usage to receive accurate usage-based pricing, indicate whether the request is for new service or a switch, and optionally pass a desired start date. Each plan in the response includes the supplier, contract term, per-kWh price, monthly fee, renewable percentage, and ready-to-use enrollment URLs stamped with your partner code.
+
+## Parameters
+
+<ParamField query="zipCode" type="String" required>
+  ZIP code for the business service location. This is the only required parameter — the query will not execute without it.
+</ParamField>
+
+<ParamField query="annualUsageInkWh" type="Float">
+  Annual electricity usage in kWh for the business. Supplying this value ensures that the returned `price` reflects the supplier's rate at the customer's actual usage level. Omit only when usage is unknown.
+</ParamField>
+
+<ParamField query="isMoveIn" type="Boolean">
+  Set to `true` when the customer is establishing new service at a location (move-in). Defaults to `false`, which represents a switch from an existing retail electricity provider. Passing the correct value ensures the returned enrollment URLs route the customer through the right onboarding flow.
+</ParamField>
+
+<ParamField query="startDate" type="Date">
+  Requested service start date in `YYYY-MM-DD` format. The date must be on or after the minimum allowable start date for the service territory — passing an earlier date returns a validation error.
+
+  <Note>
+    Use the [`nextStartDate`](/queries/next-start-date) query to retrieve the minimum allowable start date for a given ZIP code before calling `businessPlans` with a specific `startDate`.
+  </Note>
+</ParamField>
+
+## Example
+
+```graphql
+{
+  businessPlans(zipCode: "75070", annualUsageInkWh: 23000, isMoveIn: true) {
+    id
+    term
+    price
+    monthlyFee
+    supplier { name }
+    enrollmentUrl
+    agreementUrl
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "businessPlans": [
+      {
+        "id": "58b2e47e-91d7-4b72-9b5d-9bc9136613d8",
+        "term": 3,
+        "price": 0.0705,
+        "monthlyFee": 4.95,
+        "supplier": { "name": "NRG Energy, Inc." },
+        "enrollmentUrl": "https://www.cert.powerhq.co/app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=BUSINESS_PARTNER&plan_id=58b2e47e-91d7-4b72-9b5d-9bc9136613d8&zip_code=75070&start_date=2026-07-23&annual_usage=23000.0&is_move_in=true&ref=YOUR_PARTNER_CODE",
+        "agreementUrl": "https://www.cert.powerhq.co/api/document/sample/template/v3/AgreementPreview.pdf?key=TX/NRG/ONCOR&type=supplier_contract"
+      }
+    ]
+  }
+}
+```
+
+## Response fields
+
+<ResponseField name="id" type="ID">
+  Unique identifier for the business plan.
+</ResponseField>
+
+<ResponseField name="term" type="Int">
+  Contract length in months.
+</ResponseField>
+
+<ResponseField name="price" type="Float">
+  Effective energy price in $/kWh, calculated based on the provided `annualUsageInkWh`. Omitting `annualUsageInkWh` may result in a default usage assumption that does not reflect your customer's actual costs.
+</ResponseField>
+
+<ResponseField name="monthlyFee" type="Float">
+  Fixed monthly fee in USD charged in addition to the per-kWh energy charge.
+</ResponseField>
+
+<ResponseField name="renewablePercentage" type="Int">
+  Percentage of energy sourced from renewable generation, from `0` to `100`.
+</ResponseField>
+
+<ResponseField name="supplier" type="Supplier">
+  The retail electricity supplier offering this plan.
+
+  <Expandable title="supplier fields">
+    <ResponseField name="id" type="ID">
+      Unique identifier for the supplier.
+    </ResponseField>
+
+    <ResponseField name="name" type="String">
+      Full legal name of the supplier.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="enrollmentUrl" type="String">
+  Hosted enrollment hand-off URL, pre-stamped with your partner code. Send the customer to this URL to complete sign-up through the standard PowerHQ-hosted enrollment flow.
+</ResponseField>
+
+<ResponseField name="headlessEnrollmentUrl" type="String">
+  Embeddable enrollment hand-off URL, pre-stamped with your partner code. Use this URL inside an iframe or webview to embed the enrollment experience directly within your product.
+</ResponseField>
+
+<ResponseField name="agreementUrl" type="String">
+  Direct URL to the supplier's contract PDF for this plan. Display or download this document so the customer can review the full terms of service before enrolling.
+</ResponseField>
+
+<Tip>
+  For guidance on when to use `enrollmentUrl` versus `headlessEnrollmentUrl` and how partner stamping works, see [Enrollment Concepts](/concepts/enrollment).
+</Tip>

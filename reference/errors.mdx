@@ -1,0 +1,105 @@
+---
+title: "Error Handling in the PowerHQ Plan Data API"
+sidebarTitle: "Errors"
+description: "How to handle HTTP errors, GraphQL validation errors, and nullable fields in the PowerHQ Plan Data API, with a guide to building a resilient integration."
+---
+
+The PowerHQ Plan Data API uses two distinct error patterns depending on where the problem originates. Transport and authentication failures surface as HTTP error status codes before your GraphQL query is ever evaluated. Query and validation problems — such as invalid input or business rule violations — return HTTP 200 with a structured `errors` array in the response body. You need to handle both patterns in your integration.
+
+---
+
+## HTTP errors
+
+HTTP errors occur at the transport layer and mean the API never processed your GraphQL query. These are the only situations in which the API returns a non-200 HTTP status.
+
+| Status | Cause | Resolution |
+|--------|-------|------------|
+| `403 Forbidden` | Missing or invalid `x-api-key` request header, or the request originated from a non-allow-listed IP address | Verify your API key is present and correct. Confirm your server's egress IP address is allow-listed in your PowerHQ account settings. |
+| `400 Bad Request` | Malformed HTTP request body — the server could not parse the request as valid JSON or could not locate a `query` field | Ensure your request body is valid JSON and includes a `query` key containing your GraphQL operation string. |
+
+<Warning>
+  A `403 Forbidden` response can result from **either** an invalid API key **or** a non-allow-listed IP address. Both conditions produce the same status code with no additional detail in the body. If you receive a 403 after confirming your API key is correct, check whether your server IP has been added to your allow-list.
+</Warning>
+
+---
+
+## GraphQL errors
+
+Query and validation errors do **not** cause an HTTP error status. Instead, the API returns HTTP 200 with an `errors` array at the top level of the response body. The `data` field will be `null` or partially populated depending on which field failed.
+
+```json
+{
+  "errors": [
+    { "message": "Invalid zipcode 1234" }
+  ],
+  "data": null
+}
+```
+
+<Warning>
+  Always check the response body for an `errors` key, even when the HTTP status is `200`. A 200 response does not guarantee that your query returned valid data.
+</Warning>
+
+---
+
+## Common validation errors
+
+The table below lists the specific error messages the API returns for known input problems.
+
+| Message | Cause |
+|---------|-------|
+| `"Invalid zipcode XXXXX"` | The ZIP code you provided is malformed, does not exist, or falls outside a supported deregulated electricity market. |
+| `"No street address or account number specified for utility accounts search"` | You called `utilityAccounts` without providing at least one of the required search inputs: `street` or `accountNumber`. |
+| `"startDate is before the minimum start date"` (or similar) | You called `businessPlans` with a `startDate` argument earlier than the minimum date allowed for that ZIP code. Use the `nextStartDate` query to retrieve the correct minimum before passing a date. |
+
+<Tip>
+  Before calling `businessPlans` with a `startDate`, call `nextStartDate` first to get the earliest valid start date for the requested ZIP code. This avoids a round-trip validation error in your enrollment flow.
+</Tip>
+
+---
+
+## Nullable fields
+
+Some fields on `ResidentialPlan` and `UtilityAccount` are nullable by design. Their absence from a response is not an error — it simply means the data is not available for that particular plan or account. Do not treat a `null` value on these fields as a failure condition.
+
+**Nullable fields on `ResidentialPlan`:**
+
+- `earlyTerminationFeeUsd` — not all plans carry an ETF dollar amount
+- `earlyTerminationFeeType` — ETF structure may be undetermined
+- `minimumStartDate` — start date window may be open-ended
+- `maximumStartDate` — start date window may be open-ended
+- `utilityCode` — may not be populated for all service territories
+- `stateCode` — may not be populated for all plans
+- `createdAt` — catalog entry timestamp may be absent for older plans
+- `supplierScores` — the entire object is `null` when the supplier has no ratings on file; individual score categories within the object (`energyBotRating`, `plansAndRates`, `customerService`, `renewablePlans`, `pucRating`) may also be independently `null`
+
+**Arrays that can legitimately be empty:**
+
+- `documents[]` — a plan may have no attached regulatory documents
+- `feeBreakdown[].rules` — a fee may have no supplementary rule entries
+- `tags[]` — a plan may carry no descriptive tags
+
+<Info>
+  Always code defensively when reading these fields. Check for `null` before accessing nested properties on `supplierScores`, and handle empty arrays in `documents`, `rules`, and `tags` without treating them as errors.
+</Info>
+
+---
+
+## Handling errors in your integration
+
+Follow these practices to build a resilient integration with the PowerHQ API.
+
+**Always check `errors` before processing `data`.** After every API call, inspect the top-level `errors` key in the response body before you attempt to read from `data`. If `errors` is present and non-empty, handle the error condition first.
+
+```json
+{
+  "errors": [{ "message": "Invalid zipcode 99999" }],
+  "data": null
+}
+```
+
+**Log the full error message for debugging.** The `message` string in each error object contains the most actionable diagnostic detail available. Write it to your server logs so you can diagnose issues without needing to reproduce them interactively.
+
+**Do not expose raw API error messages to end users.** Error messages like `"Invalid zipcode 1234"` are intended for developers. Map them to user-friendly copy in your application layer — for example, "We couldn't find plans for that ZIP code. Please check the ZIP code and try again."
+
+**Handle unknown enum values gracefully.** The API may introduce new enum values in future versions. Treat any unrecognized enum value as a fallback case rather than an error to avoid breaking your integration when the schema evolves.

@@ -1,0 +1,50 @@
+---
+title: "Enrollment URLs and Partner Attribution"
+sidebarTitle: "Enrollment"
+description: "Understand the two partner-stamped enrollment URLs on every plan and how attribution works so your conversions are tracked back to your account."
+---
+
+Every plan returned by the API includes two partner-stamped enrollment URLs you can hand customers off to when they're ready to sign up. Both URLs are pre-configured with your partner code so conversions attribute to your account automatically — you do not need to add tracking parameters yourself.
+
+## Hosted enrollment (enrollmentUrl)
+
+`enrollmentUrl` links to a full-page, PowerHQ-hosted enrollment flow. Use this when you want to redirect the customer to a standalone page managed entirely by PowerHQ. Your partner code is embedded in the URL as both the `utm_source` and `ref` query parameters, so every completed enrollment is attributed to you.
+
+<Tip>
+The hosted flow is the fastest integration path. Drop the URL into a button or link and PowerHQ handles the rest — plan display, customer information collection, and supplier hand-off.
+</Tip>
+
+## Headless enrollment (headlessEnrollmentUrl)
+
+`headlessEnrollmentUrl` provides an embeddable enrollment flow you can render inside your own UI — for example, inside an iframe or a modal. Like the hosted URL, it is already partner-stamped with your `utm_source` and `ref` values.
+
+Use the headless URL when you want customers to complete enrollment without leaving your product's visual context.
+
+**Example URL pattern:**
+
+```bash
+https://www.cert.powerhq.co/partner-app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=RESIDENTIAL_PARTNER&plan_id=7a8c1d9f-f83a-4322-850f-c6939ccf4fb3&zip_code=77002&ref=YOUR_PARTNER_CODE
+```
+
+The URL contains:
+- `utm_source` and `ref` — your partner code for attribution
+- `plan_id` — the unique plan identifier from the API
+- `zip_code` — the customer's ZIP code passed through from your query
+
+## Supplier enrollment link
+
+Some plans include a `LinkType.ENROLLMENT` entry inside the `documents[]` array. This entry points directly to the **supplier's own website** and is not a PowerHQ-hosted flow.
+
+<Warning>
+The `documents[]` enrollment link is **not** guaranteed to be present on every plan. Do not rely on it as your primary enrollment path. Use `enrollmentUrl` or `headlessEnrollmentUrl` for a consistent, partner-attributed experience. The supplier link is best treated as a fallback or reference only.
+</Warning>
+
+## Attribution
+
+Your partner code replaces the `YOUR_PARTNER_CODE` placeholder shown in the example URL above. The API returns URLs already stamped with your actual code — you do not need to inject or modify any parameters before presenting the URL to the customer.
+
+This ensures that every enrollment completed through either URL is correctly attributed to your account for reporting and commission purposes. Do not strip, modify, or re-encode the query parameters.
+
+<Note>
+Before presenting any enrollment URL to a customer, make sure all applicable disclosure documents are visible. Customers must have access to plan disclosures before they enroll. See [Disclosure Documents](/concepts/disclosure-documents) for requirements.
+</Note>

@@ -1,0 +1,147 @@
+---
+title: "utilityAccounts: Search Utility Service Accounts"
+sidebarTitle: "utilityAccounts"
+description: "Search existing utility service accounts by street address or account number to verify a customer's service location and account status before enrollment."
+---
+
+The `utilityAccounts` query searches existing utility service accounts by street address, account number, or both. Use it to verify that a customer's service location exists in the utility's system and to retrieve account details — such as account status and TDU code — before submitting an enrollment.
+
+## Parameters
+
+<Warning>
+  At least one of `street` or `accountNumber` is required. If you omit both, the API returns the error: `"No street address or account number specified for utility accounts search"`.
+</Warning>
+
+<ParamField query="street" type="String">
+  Street address line 1 of the service location. **Required if `accountNumber` is not provided.**
+</ParamField>
+
+<ParamField query="accountNumber" type="String">
+  The utility account number associated with the service location. **Required if `street` is not provided.**
+</ParamField>
+
+<ParamField query="street2" type="String">
+  Street address line 2 (for example, apartment or suite number).
+</ParamField>
+
+<ParamField query="city" type="String">
+  City of the service location.
+</ParamField>
+
+<ParamField query="state" type="String">
+  Two-letter U.S. state code (for example, `"TX"`).
+</ParamField>
+
+<ParamField query="zipCode" type="String">
+  Five-digit ZIP code of the service location.
+</ParamField>
+
+<ParamField query="isBusiness" type="Boolean">
+  Filter results to business accounts (`true`) or residential accounts (`false`). Omit to return all matching accounts regardless of account type.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  utilityAccounts(
+    street: "947 STREETLIGHT STLG 250HPS"
+    city: "BROWNSVILLE"
+    state: "TX"
+    zipCode: "78521"
+  ) {
+    id
+    accountNumber
+    utilityCode
+    isBusiness
+    accountStatus
+    displayAddress
+    serviceAddress {
+      street
+      street2
+      city
+      state
+      zipCode
+    }
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "utilityAccounts": [
+      {
+        "id": "v2-CB1C1D302FC4B19F58D4F89F775AAFD6",
+        "accountNumber": "10032789448946468",
+        "utilityCode": "AEPCC",
+        "isBusiness": true,
+        "accountStatus": "ACTIVE",
+        "displayAddress": "947 STREETLIGHT STLG 250HPS,  CAMERON COUNTY ST LIGHTS, BROWNSVILLE, TX",
+        "serviceAddress": {
+          "street": "947 STREETLIGHT STLG 250HPS",
+          "street2": " CAMERON COUNTY ST LIGHTS",
+          "city": "BROWNSVILLE",
+          "state": "TX",
+          "zipCode": "78521"
+        }
+      }
+    ]
+  }
+}
+```
+
+## Response fields
+
+<ResponseField name="id" type="ID">
+  Unique identifier for the service account (for example, `"v2-CB1C1D302FC4B19F58D4F89F775AAFD6"`).
+</ResponseField>
+
+<ResponseField name="accountNumber" type="String">
+  The utility-assigned account number. May be `null` for some accounts.
+</ResponseField>
+
+<ResponseField name="accountStatus" type="AccountStatus">
+  Current status of the account. Possible values:
+  - `ACTIVE` — The account is energized and in service.
+  - `INACTIVE` — The account exists but is not currently in service.
+  - `DE_ENERGIZED` — Service has been disconnected at this location.
+</ResponseField>
+
+<ResponseField name="utilityCode" type="String">
+  The TDU or utility code associated with this account (for example, `"AEPCC"`).
+</ResponseField>
+
+<ResponseField name="isBusiness" type="Boolean">
+  `true` if this is a business account; `false` if it is a residential account.
+</ResponseField>
+
+<ResponseField name="displayAddress" type="String">
+  A pre-formatted, human-readable version of the full service address. May be `null` for some accounts.
+</ResponseField>
+
+<ResponseField name="serviceAddress" type="Address">
+  The structured service address for this account.
+
+  <Expandable title="serviceAddress fields">
+    <ResponseField name="street" type="String">
+      Street address line 1.
+    </ResponseField>
+
+    <ResponseField name="street2" type="String">
+      Street address line 2 (for example, suite or unit). May be `null`.
+    </ResponseField>
+
+    <ResponseField name="city" type="String">
+      City name.
+    </ResponseField>
+
+    <ResponseField name="state" type="String">
+      Two-letter state code (for example, `"TX"`).
+    </ResponseField>
+
+    <ResponseField name="zipCode" type="String">
+      Five-digit ZIP code.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

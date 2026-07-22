@@ -1,0 +1,111 @@
+---
+title: "Disclosure Documents: EFL, TOS, YRAC, and More"
+sidebarTitle: "Disclosures"
+description: "Every plan's documents[] array contains required regulatory disclosures. Learn which types appear by market and how to surface them correctly in your UI."
+---
+
+Every plan returned by the API includes a `documents[]` array containing links to required regulatory disclosure documents. The document types present in the array depend on the market the plan is sold in — a Texas plan carries different required documents than a Pennsylvania plan. Always iterate the full array and surface every entry rather than checking for a specific type by name.
+
+## Document types by market
+
+| Market | Required document types |
+|---|---|
+| Texas | `EFL`, `TOS`, `YRAC` |
+| Pennsylvania | `CONTRACT_SUMMARY`, `TOS` |
+| Other markets | Varies — inspect `documents[]` on each plan |
+
+<Note>
+Additional document types may appear on any plan regardless of market: `PREPAID_DISCLOSURE_STATEMENT`, `ENVIRONMENTAL_DISCLOSURE`, `ARBITRATION_ADDENDUM`, `COMM_POLICY`, `PAYMENT_TERMS`, and `ENROLLMENT` (a link to the supplier's own enrollment page). Do not assume a specific type is absent just because it is not listed above as required for that market.
+</Note>
+
+## Accessing documents
+
+Request the `documents` field on any `residentialPlans` query to retrieve the full set of disclosure links for each plan.
+
+```graphql
+query PlansWithDocuments($input: ResidentialPlansInput!) {
+  residentialPlans(input: $input) {
+    plans {
+      id
+      name
+      documents {
+        type
+        url
+        title
+      }
+    }
+  }
+}
+```
+
+The response includes one entry per document associated with the plan:
+
+```json
+{
+  "documents": [
+    {
+      "type": "EFL",
+      "url": "https://example.com/docs/efl-plan-123.pdf",
+      "title": "Electricity Facts Label"
+    },
+    {
+      "type": "TOS",
+      "url": "https://example.com/docs/tos-plan-123.pdf",
+      "title": "Terms of Service"
+    },
+    {
+      "type": "YRAC",
+      "url": "https://example.com/docs/yrac-plan-123.pdf",
+      "title": "Your Rights as a Customer"
+    }
+  ]
+}
+```
+
+The `title` field is optional and may be `null`. Use the `type` value as the display label fallback when `title` is absent.
+
+## Display requirements
+
+<Warning>
+**Disclosure documents must be accessible to the customer whenever a plan is displayed, and they must be presented before the customer proceeds to enrollment.**
+
+Do not gate or hide disclosure links behind additional clicks once a plan is visible. Regulators in Texas and other deregulated markets require customers to have access to documents such as the EFL and TOS before signing up for a plan.
+</Warning>
+
+To meet this requirement in your UI:
+
+1. Fetch `documents { type url title }` for every plan you display.
+2. Render a link for **each entry** in the array — do not filter or skip types you don't recognize.
+3. Make the links accessible on the plan detail view, not only at checkout.
+4. Do not assume any specific document type will be present on a given plan. Always iterate the full `documents[]` array.
+
+## PlanDocument type
+
+```graphql
+type PlanDocument {
+  type:  LinkType!   # Identifies the document category
+  url:   String!     # Direct link to the document
+  title: String      # Optional human-readable label (may be null)
+}
+```
+
+The `LinkType` enum covers all possible document categories:
+
+```graphql
+enum LinkType {
+  EFL
+  TOS
+  YRAC
+  ENROLLMENT
+  PREPAID_DISCLOSURE_STATEMENT
+  CONTRACT_SUMMARY
+  ENVIRONMENTAL_DISCLOSURE
+  ARBITRATION_ADDENDUM
+  COMM_POLICY
+  PAYMENT_TERMS
+}
+```
+
+<Note>
+`documents[]` can legitimately be empty on some plans. An empty array is not an error — it simply means the supplier has not associated any disclosure documents with that plan in the system. Continue to display the plan normally; just omit the disclosures section of your UI for that plan.
+</Note>

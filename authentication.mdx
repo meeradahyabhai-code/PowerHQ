@@ -1,0 +1,107 @@
+---
+title: "Authenticate Requests to the PowerHQ API"
+sidebarTitle: "Authentication"
+description: "Secure every PowerHQ API request with your API key and a registered server IP — both are required before any call will succeed."
+---
+
+The PowerHQ Plan Data API uses a two-factor authentication model: every request must carry a valid **API key** in an HTTP header, and the request must originate from a **server IP address** that has been registered on the allow-list. Both factors are checked on every call — a valid key from an unregistered IP is still rejected, and a listed IP with a missing or invalid key is equally refused.
+
+## Your API Key
+
+Pass your API key in the `x-api-key` HTTP header on every request. The key is a static secret issued by your PowerHQ representative; treat it like a password and never expose it in client-side code or public repositories.
+
+<CodeGroup>
+
+```bash curl
+curl -s -X POST https://eapi.prod.powerhq.co/graphql \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://eapi.prod.powerhq.co/graphql",
+    headers={
+        "x-api-key": "YOUR_API_KEY",
+        "Content-Type": "application/json",
+    },
+    json={"query": "{ utilities(zipCode: \"75231\") { id name } }"},
+)
+
+data = response.json()
+print(data)
+```
+
+```javascript Node.js
+const response = await fetch("https://eapi.prod.powerhq.co/graphql", {
+  method: "POST",
+  headers: {
+    "x-api-key": "YOUR_API_KEY",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    query: `{ utilities(zipCode: "75231") { id name } }`,
+  }),
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+## IP Allow-Listing
+
+Your server's egress IP address must be registered with PowerHQ before any request will succeed, regardless of whether your API key is valid. This requirement applies to both environments.
+
+Contact your PowerHQ representative to register your IP address(es). When submitting IPs, keep the following in mind:
+
+- **Use a static egress IP.** Dynamic or residential IP addresses are not appropriate — they change over time and will cause intermittent `403` errors that are difficult to diagnose.
+- **Register all outbound IPs.** If your infrastructure uses multiple egress addresses (for example, across availability zones or data centers), submit all of them.
+- **Allow time for propagation.** Newly registered IPs typically become active within one business day. Coordinate with your PowerHQ representative if you need expedited activation.
+
+## Environments
+
+Both environments enforce the same authentication requirements. Use Certification while you build and test; switch to Production for live customer traffic.
+
+| Environment | Endpoint | Intended Use |
+|---|---|---|
+| Production | `https://eapi.prod.powerhq.co/graphql` | Live traffic serving real customers |
+| Certification (staging) | `https://eapi.cert.powerhq.co/graphql` | Development, integration testing, and QA |
+
+<Tip>
+  Point your integration at the Certification environment during development. It lets you iterate safely without risking any impact to production data or customer-facing systems.
+</Tip>
+
+## Error Responses
+
+### 403 Forbidden
+
+<Warning>
+  A `403 Forbidden` response means either your API key is missing or invalid, **or** your request originated from an IP address that is not on the allow-list. The response body does not distinguish between the two cases. Verify both your `x-api-key` header value and your server's egress IP when debugging a 403.
+</Warning>
+
+### 400 Bad Request
+
+A `400 Bad Request` response indicates a malformed HTTP request body — for example, invalid JSON or a missing `Content-Type: application/json` header. Check that your request body is valid JSON and that the `Content-Type` header is set correctly.
+
+### GraphQL Errors (HTTP 200)
+
+GraphQL errors — such as unknown fields, missing required arguments, or resolver-level failures — are returned with an HTTP status of `200`. The response body contains an `errors` array alongside (or instead of) the `data` object:
+
+```json
+{
+  "errors": [
+    {
+      "message": "Field 'unknownField' doesn't exist on type 'Plan'",
+      "locations": [{ "line": 1, "column": 42 }],
+      "path": ["residentialPlans", 0, "unknownField"]
+    }
+  ]
+}
+```
+
+For a full list of GraphQL error codes and how to handle them, see the [Errors reference](/reference/errors).

@@ -1,0 +1,252 @@
+---
+title: "residentialPlans: Fetch Retail Electricity Plans by ZIP"
+sidebarTitle: "residentialPlans"
+description: "Query retail electricity plans for a U.S. residential address by ZIP code or utility ID, with usage-based pricing, supplier scores, and enrollment URLs."
+---
+
+The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, supplier reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code.
+
+## Parameters
+
+<ParamField query="zipCode" type="String">
+  ZIP code for the residential service location. If you supply both `zipCode` and `utilityId`, `utilityId` takes precedence. If neither parameter resolves to a known service area, the query returns an empty list rather than an error.
+</ParamField>
+
+<ParamField query="utilityId" type="ID">
+  Utility or TDU (Transmission and Distribution Utility) ID. When provided alongside `zipCode`, `utilityId` takes precedence and `zipCode` is ignored.
+</ParamField>
+
+<ParamField query="monthlyUsage" type="Long">
+  Monthly electricity usage in kWh used to calculate the returned `price`. Defaults to `1000` when omitted.
+</ParamField>
+
+<ParamField query="priceType" type="String">
+  Pricing mode applied to the `price` field.
+
+  - **Omitted / default** — seasonalized pricing that accounts for usage variation across months.
+  - `"FLAT"` — prices the plan at the exact `monthlyUsage` value with no seasonal adjustment.
+
+  See [Pricing Concepts](/concepts/pricing) for the difference between advertised and all-in rates.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  residentialPlans(zipCode: "77002", monthlyUsage: 1000) {
+    title
+    price
+    term
+    rateType
+    supplier { name }
+    rates { usageKwh allInRateUsdPerKwh avgMonthlyBillUsd }
+    supplierScores { energyBotRating plansAndRates customerService renewablePlans pucRating }
+    headlessEnrollmentUrl
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "residentialPlans": [
+      {
+        "title": "12 Month (No Min Usage Fee)",
+        "price": 0.138,
+        "term": 12,
+        "rateType": "FIXED",
+        "supplier": { "name": "Constellation NewEnergy, Inc." },
+        "rates": [
+          { "usageKwh": 500,  "allInRateUsdPerKwh": 0.1428,  "avgMonthlyBillUsd": 71.4 },
+          { "usageKwh": 1000, "allInRateUsdPerKwh": 0.1379,  "avgMonthlyBillUsd": 137.9 },
+          { "usageKwh": 2000, "allInRateUsdPerKwh": 0.13545, "avgMonthlyBillUsd": 270.9 }
+        ],
+        "supplierScores": {
+          "energyBotRating": 4.7,
+          "plansAndRates": 4.0,
+          "customerService": 5.0,
+          "renewablePlans": 2.0,
+          "pucRating": 5.0
+        },
+        "headlessEnrollmentUrl": "https://www.cert.powerhq.co/partner-app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=RESIDENTIAL_PARTNER&plan_id=7a8c1d9f-f83a-4322-850f-c6939ccf4fb3&zip_code=77002&ref=YOUR_PARTNER_CODE"
+      }
+    ]
+  }
+}
+```
+
+## Response fields
+
+<ResponseField name="id" type="ID">
+  Unique identifier for the plan.
+</ResponseField>
+
+<ResponseField name="title" type="String">
+  Marketing name of the plan as displayed to customers.
+</ResponseField>
+
+<ResponseField name="description" type="String">
+  Plain-text description of the plan's key terms and features.
+</ResponseField>
+
+<ResponseField name="price" type="Float">
+  Effective price in $/kWh calculated at the requested `monthlyUsage`. Uses seasonalized pricing by default; pass `priceType: "FLAT"` to price at the exact usage with no seasonal adjustment.
+</ResponseField>
+
+<ResponseField name="term" type="Int">
+  Contract length in months.
+</ResponseField>
+
+<ResponseField name="renewablePercentage" type="Int">
+  Percentage of energy sourced from renewable generation, from `0` to `100`.
+</ResponseField>
+
+<ResponseField name="rateType" type="RateType">
+  Indicates whether the plan has a `FIXED`, `VARIABLE`, or `INDEXED` rate structure.
+</ResponseField>
+
+<ResponseField name="timeOfUse" type="Boolean">
+  `true` if the plan applies different rates depending on the time of day energy is consumed.
+</ResponseField>
+
+<ResponseField name="isBillCreditPlan" type="Boolean">
+  `true` if the plan's pricing structure includes bill credits at certain usage thresholds.
+</ResponseField>
+
+<ResponseField name="isPetFriendly" type="Boolean">
+  `true` if the supplier has designated this plan as pet-friendly (no deposit required for customers with pets, per supplier policy).
+</ResponseField>
+
+<ResponseField name="enrollmentUrl" type="String">
+  Hosted enrollment hand-off URL, pre-stamped with your partner code. Direct customers here to complete sign-up on the PowerHQ-hosted flow.
+</ResponseField>
+
+<ResponseField name="headlessEnrollmentUrl" type="String">
+  Embeddable enrollment hand-off URL, pre-stamped with your partner code. Use this URL inside an iframe or webview to embed the enrollment flow directly in your product.
+</ResponseField>
+
+<ResponseField name="isEarlyTerminationPenalized" type="Boolean">
+  `true` if the customer incurs a penalty for cancelling the contract before the term ends.
+</ResponseField>
+
+<ResponseField name="earlyTerminationFeeUsd" type="Float">
+  Early termination fee amount in USD. `null` when no fee applies or the fee is not a fixed dollar amount.
+</ResponseField>
+
+<ResponseField name="earlyTerminationFeeType" type="EarlyTerminationFeeType">
+  Describes how the early termination fee is calculated (e.g., flat fee, per-month remaining). `null` when no fee applies.
+</ResponseField>
+
+<ResponseField name="minimumStartDate" type="Date">
+  Earliest date on which service can begin. `null` if no minimum is enforced.
+</ResponseField>
+
+<ResponseField name="maximumStartDate" type="Date">
+  Latest date on which service can begin. `null` if no maximum is enforced.
+</ResponseField>
+
+<ResponseField name="utilityCode" type="String">
+  TDU (Transmission and Distribution Utility) code for the service territory. `null` when not applicable.
+</ResponseField>
+
+<ResponseField name="stateCode" type="String">
+  Two-letter U.S. state code for the plan's service territory. `null` when not resolved.
+</ResponseField>
+
+<ResponseField name="createdAt" type="DateTime">
+  Timestamp when the plan was first added to the PowerHQ catalog. `null` for legacy plans created before timestamp tracking was introduced.
+</ResponseField>
+
+<ResponseField name="supplier" type="Supplier">
+  The retail electricity supplier offering this plan.
+
+  <Expandable title="supplier fields">
+    <ResponseField name="id" type="ID">
+      Unique identifier for the supplier.
+    </ResponseField>
+
+    <ResponseField name="name" type="String">
+      Full legal name of the supplier.
+    </ResponseField>
+
+    <ResponseField name="shortName" type="String">
+      Abbreviated or display name of the supplier, suitable for UI labels.
+    </ResponseField>
+
+    <ResponseField name="logoUrl" type="String">
+      URL of the supplier's logo image.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="rates" type="PlanRate[]">
+  Rate breakdowns at standard usage levels (500, 1000, and 2000 kWh/month). Each entry contains both the advertised rate and the all-in rate so you can display accurate cost comparisons.
+
+  <Expandable title="rates[] fields">
+    <ResponseField name="usageKwh" type="Int">
+      The usage level in kWh this rate entry applies to (typically `500`, `1000`, or `2000`).
+    </ResponseField>
+
+    <ResponseField name="advertisedPriceUsdPerKwh" type="Float">
+      Advertised energy rate in $/kWh at this usage level, as shown on the plan's Electricity Facts Label (EFL).
+    </ResponseField>
+
+    <ResponseField name="allInRateUsdPerKwh" type="Float">
+      All-in effective rate in $/kWh at this usage level, including all fees and credits. See [Pricing Concepts](/concepts/pricing) for a full breakdown of what's included.
+    </ResponseField>
+
+    <ResponseField name="avgMonthlyBillUsd" type="Float">
+      Estimated average monthly bill in USD at this usage level, calculated as `allInRateUsdPerKwh × usageKwh`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="supplierScores" type="SupplierScores">
+  Supplier reputation scores sourced independently from plan pricing. This field is **nullable** — it is `null` when score data is unavailable for a supplier.
+
+  <Expandable title="supplierScores fields">
+    <ResponseField name="energyBotRating" type="Float">
+      Overall EnergyBot rating for the supplier, on a scale of 0–5. Nullable.
+    </ResponseField>
+
+    <ResponseField name="plansAndRates" type="Float">
+      Score reflecting the competitiveness and clarity of the supplier's plans and rates, on a scale of 0–5. Nullable.
+    </ResponseField>
+
+    <ResponseField name="customerService" type="Float">
+      Customer service score based on reviews and complaint data, on a scale of 0–5. Nullable.
+    </ResponseField>
+
+    <ResponseField name="renewablePlans" type="Float">
+      Score reflecting the breadth and quality of the supplier's renewable energy offerings, on a scale of 0–5. Nullable.
+    </ResponseField>
+
+    <ResponseField name="pucRating" type="Float">
+      Score derived from Public Utility Commission (PUC) complaint and compliance data, on a scale of 0–5. Nullable.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="feeBreakdown" type="PlanFee[]">
+  List of individual fees that make up the plan's cost structure (e.g., TDU delivery charges, bill credits, minimum usage fees).
+
+  <Note>
+    `feeBreakdown` may be an empty array if no itemized fees are available. Individual fee entries may include a `rules` array that is also empty.
+  </Note>
+</ResponseField>
+
+<ResponseField name="documents" type="PlanDocument[]">
+  Regulatory and informational documents associated with the plan, such as the Electricity Facts Label (EFL) and Terms of Service.
+
+  <Note>
+    `documents` may be an empty array. Always check the array length before attempting to display document links.
+  </Note>
+</ResponseField>
+
+<ResponseField name="tags" type="PlanTag[]">
+  Labels applied to the plan for filtering and display purposes (e.g., `"No Deposit"`, `"Green"`, `"Prepaid"`).
+
+  <Note>
+    `tags` may be an empty array.
+  </Note>
+</ResponseField>

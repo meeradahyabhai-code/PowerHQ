@@ -1,0 +1,79 @@
+---
+title: "energyInfoByState: State Energy Rates and Generation Mix"
+sidebarTitle: "energyInfoByState"
+description: "Retrieve the average electricity rate and renewable vs. non-renewable generation mix for any U.S. state, for either residential or business customers."
+---
+
+The `energyInfoByState` query returns the average electricity rate and the renewable/non-renewable generation mix for a given U.S. state. Pass a two-letter state code and specify whether you need residential or business rates to get market-level context you can display alongside individual plan prices or use to benchmark offers in your application.
+
+## Parameters
+
+<ParamField query="stateCode" type="String!" required>
+  Two-letter U.S. state code for the state you want data for (e.g. `"TX"`, `"PA"`, `"IL"`).
+</ParamField>
+
+<ParamField query="isBusiness" type="Boolean!" required>
+  Pass `true` to retrieve business rates; pass `false` to retrieve residential rates.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  energyInfoByState(stateCode: "TX", isBusiness: false) {
+    averagePrice
+    stateName
+    electricityGenerationPercentage {
+      renewableGeneration
+      nonRenewableGeneration
+    }
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "energyInfoByState": {
+      "averagePrice": 16.99,
+      "stateName": "Texas",
+      "electricityGenerationPercentage": {
+        "renewableGeneration": 34,
+        "nonRenewableGeneration": 66
+      }
+    }
+  }
+}
+```
+
+## Response fields
+
+<ResponseField name="averagePrice" type="Float">
+  Average electricity rate for the state, expressed in cents per kWh.
+</ResponseField>
+
+<ResponseField name="stateCode" type="String">
+  Two-letter state code matching the value you passed in the request.
+</ResponseField>
+
+<ResponseField name="stateName" type="String">
+  Full name of the state (e.g. `"Texas"`).
+</ResponseField>
+
+<ResponseField name="electricityGenerationPercentage" type="ElectricityGenerationPercentage">
+  Breakdown of how electricity in the state is generated. This field is nullable — it may be `null` if generation data is unavailable for the requested state.
+
+  <Expandable title="ElectricityGenerationPercentage fields">
+    <ResponseField name="renewableGeneration" type="Int">
+      Percentage of total electricity generation that comes from renewable sources (e.g. wind, solar, hydro).
+    </ResponseField>
+
+    <ResponseField name="nonRenewableGeneration" type="Int">
+      Percentage of total electricity generation that comes from non-renewable sources (e.g. natural gas, coal, nuclear).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Tip>
+  Use `averagePrice` to display market context alongside individual plan prices — this helps customers understand whether a plan is above or below the state average.
+</Tip>

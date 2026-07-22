@@ -1,0 +1,81 @@
+---
+title: "Understanding Advertised vs. All-In Electricity Pricing"
+sidebarTitle: "Pricing"
+description: "Learn how advertisedPriceUsdPerKwh and allInRateUsdPerKwh differ across Texas and deregulated markets, and which fields to use when building your UI."
+---
+
+Each plan's `rates[]` array returns pricing data at three standard usage tiers — 500, 1,000, and 2,000 kWh per month. At each tier you receive two per-kWh rate fields (`advertisedPriceUsdPerKwh` and `allInRateUsdPerKwh`) plus an estimated monthly bill (`avgMonthlyBillUsd`). What those rates include depends on the market the plan is sold in.
+
+## Texas markets
+
+In Texas, both rate fields include TDU (Transmission and Distribution Utility) delivery charges, so either value represents a complete electricity cost for the customer.
+
+| Field | What it represents |
+|---|---|
+| `advertisedPriceUsdPerKwh` | The effective rate calculated at a static, standard monthly usage — exactly 500, 1,000, or 2,000 kWh flat each month. |
+| `allInRateUsdPerKwh` | The actual per-kWh cost against the customer's real usage pattern, **seasonalized by default**. This is the most accurate reflection of what a customer will pay. |
+
+Both fields fold in TDU delivery, bill credits, and any fixed fees, so the customer's total bill is fully represented by `allInRateUsdPerKwh` in Texas.
+
+## All other markets (PA, OH, IL, NJ, and more)
+
+In deregulated markets outside Texas, the utility bills delivery charges separately. **Neither rate field includes TDU delivery costs.**
+
+| Field | What it represents |
+|---|---|
+| `advertisedPriceUsdPerKwh` | The variable supply rate per kWh only — excludes any fixed monthly fee. |
+| `allInRateUsdPerKwh` | The supply rate plus the plan's fixed monthly fee amortized per kWh — still excludes TDU delivery. |
+
+<Warning>
+Outside Texas, `allInRateUsdPerKwh` does **not** equal the customer's total bill. The customer's total monthly cost is:
+
+**Total bill = all-in supply rate × usage + utility delivery charges**
+
+TDU delivery is billed separately by the utility and is not available through this API.
+</Warning>
+
+## Which field to use
+
+Use `allInRateUsdPerKwh` (and the seasonalized top-level `price` field) whenever you need to show a customer their effective supply cost. The all-in rate folds in bill credits and amortized fixed monthly fees so shoppers can make an apples-to-apples comparison across plans.
+
+- **Effective supply cost** → `allInRateUsdPerKwh` or the top-level `price`
+- **Estimated monthly bill at a specific usage tier** → `avgMonthlyBillUsd`
+- **Raw supply rate, no fee amortization** → `advertisedPriceUsdPerKwh`
+
+<Note>
+`advertisedPriceUsdPerKwh` and `allInRateUsdPerKwh` are equal only on plans that have no fixed monthly fees and no bill credits. On any plan with those adjustments the two values will differ.
+</Note>
+
+## Fee breakdown
+
+The `feeBreakdown` field on `ResidentialPlan` gives you component-level detail on every fee included in the plan's pricing. Each entry describes the fee type (`FeeType`), when it applies (`FeeApplicability`), and the amount. Use this when you want to surface an itemized breakdown — for example, showing a customer that a plan has a $9.95 monthly base charge before they enroll.
+
+See the [Types reference](/reference/types) for the full `PlanFee` type definition and the complete `FeeType` and `FeeApplicability` enumerations.
+
+## Rate types
+
+The `rateType` field on `ResidentialPlan` tells you the pricing structure of the plan. The four possible values are:
+
+| Value | Meaning |
+|---|---|
+| `FIXED` | The per-kWh rate is locked for the contract term. |
+| `VARIABLE` | The rate can change month-to-month, typically indexed to market conditions. |
+| `PREPAID` | The customer pays in advance for electricity; no deposit required. |
+| `SUBSCRIPTION` | A flat monthly fee covers electricity up to a defined usage amount. |
+
+## priceType parameter
+
+When you query a plan's top-level `price` field, the default behavior is **seasonalized** — the price reflects the customer's usage pattern adjusted for seasonal variation, which is the most accurate estimate of what they'll pay on an annualized basis.
+
+Pass `priceType: FLAT` to instead price the plan at the exact `monthlyUsage` value you supply, with no seasonal adjustment. Use `FLAT` when you want a precise rate at a single static usage level rather than a seasonal average.
+
+## PlanRate type
+
+```graphql
+type PlanRate {
+  usageKwh: Int!                # 500, 1000, or 2000
+  advertisedPriceUsdPerKwh: Float!
+  allInRateUsdPerKwh: Float!
+  avgMonthlyBillUsd: Float!
+}
+```
