@@ -1,15 +1,42 @@
 ---
 title: Playground
-description: Run live GraphQL queries against the PowerHQ Plan Data API.
-mode: "wide"
+description: Run live GraphQL queries against the PowerHQ Plan Data API from your browser.
 ---
 
-Try live GraphQL queries — **10 free calls**, no key needed. Need more? [Get an API key](mailto:support@powerhq.co).
+Every query page in these docs has a **Try it** panel. Edit the request and send it against the
+live production API without writing any code.
 
-<iframe
-  src="https://meeradahyabhai-code.github.io/powerhq-graphiql-playground/"
-  width="100%"
-  height="900"
-  style={{ border: "0", borderRadius: "10px" }}
-  title="PowerHQ GraphQL Playground"
-/>
+<Info>
+  The public playground is free and needs no API key. It allows **10 calls per IP per day** and is
+  **read-only**. When you hit the limit, [request a key](mailto:support@powerhq.co) and call the API
+  directly.
+</Info>
+
+## What you can run
+
+| Query | What it answers |
+|---|---|
+| [`utilities`](/queries/utilities) | Which utilities serve a ZIP code |
+| [`residentialPlans`](/queries/residential-plans) | Residential plans, rates and fees for a ZIP |
+| [`businessPlans`](/queries/business-plans) | Commercial plans for a ZIP and annual usage |
+| [`nextStartDate`](/queries/next-start-date) | Earliest service start date |
+| [`energyInfoByState`](/queries/energy-info-by-state) | State average rate and generation mix |
+
+## What it will not run
+
+`utilityAccounts` is **not available** in the public playground. It looks up real customer service
+accounts by street address, so it stays behind an issued API key. Mutations and subscriptions are
+blocked for the same reason: the playground is read-only.
+
+## Using your own key
+
+With an issued key you call the API directly instead of going through the playground:
+
+```bash
+curl -s -X POST https://eapi.prod.powerhq.co/graphql \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
+```
+
+There is no per-day cap on an issued key.
