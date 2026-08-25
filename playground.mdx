@@ -1,36 +1,72 @@
 ---
 title: Playground
-description: Run live GraphQL queries against the PowerHQ Plan Data API from your browser.
+description: Run live GraphQL queries against the PowerHQ Plan Data API. No API key required.
+mode: "wide"
 ---
 
-Every query page in these docs has a **Try it** panel. Edit the request and send it against the
-live production API without writing any code.
+Five example queries are already loaded. Pick a tab, press the ▶ button, and you get real
+production data back. No API key, no signup, nothing to configure.
 
 <Info>
-  The public playground is free and needs no API key. It allows **10 calls per IP per day** and is
-  **read-only**. When you hit the limit, [request a key](mailto:support@powerhq.co) and call the API
-  directly.
+  **10 calls per IP per day.** Browsing the schema and loading the page are free — only real queries
+  count. Need more? [Request an API key](mailto:support@powerhq.co) and call the API directly with no cap.
 </Info>
+
+<iframe
+  src="https://powerhq-playground-api.powerhq.workers.dev/"
+  width="100%"
+  height="900"
+  style={{ border: "1px solid #EAF1F8", borderRadius: "10px" }}
+  title="PowerHQ Plan Data API Playground"
+/>
+
+Cramped in here? [Open the playground full screen](https://powerhq-playground-api.powerhq.workers.dev/).
 
 ## What you can run
 
 | Query | What it answers |
 |---|---|
-| [`utilities`](/queries/utilities) | Which utilities serve a ZIP code |
-| [`residentialPlans`](/queries/residential-plans) | Residential plans, rates and fees for a ZIP |
+| [`residentialPlans`](/queries/residential-plans) | Residential plans, rates, fees and enrollment links for a ZIP |
 | [`businessPlans`](/queries/business-plans) | Commercial plans for a ZIP and annual usage |
-| [`nextStartDate`](/queries/next-start-date) | Earliest service start date |
+| [`utilities`](/queries/utilities) | Which utilities serve a ZIP code |
+| [`nextStartDate`](/queries/next-start-date) | Earliest available service start date |
 | [`energyInfoByState`](/queries/energy-info-by-state) | State average rate and generation mix |
+
+The Docs panel on the left of the playground is generated from the live schema, so autocomplete and
+field documentation always match what the API actually returns today.
 
 ## What it will not run
 
 `utilityAccounts` is **not available** in the public playground. It looks up real customer service
-accounts by street address, so it stays behind an issued API key. Mutations and subscriptions are
-blocked for the same reason: the playground is read-only.
+accounts by street address, so it stays behind an issued API key. The playground is read-only:
+mutations and subscriptions are rejected.
 
-## Using your own key
+## Using it from code, or from an AI agent
 
-With an issued key you call the API directly instead of going through the playground:
+The playground endpoint is a plain GraphQL endpoint. It needs no key, no authentication header and
+no browser, so a script or an AI coding assistant can call it directly:
+
+```bash
+curl -s -X POST https://powerhq-playground-api.powerhq.workers.dev/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
+```
+
+**Schema introspection is enabled and does not count against the limit**, so an agent can discover
+the whole API in one call before writing a query:
+
+```bash
+curl -s -X POST https://powerhq-playground-api.powerhq.workers.dev/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ __schema { queryType { fields { name } } } }"}'
+```
+
+Responses carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` so a client can
+see its own budget. Over the limit the endpoint returns `429` with a GraphQL-shaped error.
+
+## Moving to your own key
+
+With an issued key you skip the playground and call production directly, with no per-day cap:
 
 ```bash
 curl -s -X POST https://eapi.prod.powerhq.co/graphql \
@@ -38,5 +74,3 @@ curl -s -X POST https://eapi.prod.powerhq.co/graphql \
   -H "Content-Type: application/json" \
   -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
 ```
-
-There is no per-day cap on an issued key.

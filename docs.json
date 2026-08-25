@@ -60,8 +60,7 @@
           {
             "group": "Playground",
             "pages": [
-              "playground",
-              "try-it"
+              "playground"
             ]
           },
           {
@@ -87,13 +86,6 @@
   "footer": {
     "socials": {
       "x": "https://x.com/powerhq"
-    }
-  },
-  "api": {
-    "openapi": "openapi.json",
-    "playground": {
-      "display": "interactive",
-      "proxy": false
     }
   }
 }
