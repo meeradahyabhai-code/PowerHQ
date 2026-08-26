@@ -7,8 +7,10 @@ The [playground](/playground) is backed by a public endpoint that needs no API k
 browser. Anything you can run in the playground, you can run from a script or an AI coding assistant.
 
 <Info>
-  **10 calls per IP per day.** Loading the playground and browsing the schema are free — only real
-  queries count. [Request an API key](mailto:support@powerhq.co) to call production directly with no cap.
+  **10 free calls per IP.** Loading the playground and browsing the schema are free — only real
+  queries count against it. It is a one-time allowance, not a daily one, so it is meant for
+  evaluating the data rather than running a workload. [Request an API key](mailto:support@powerhq.co)
+  to call production directly with no cap.
 </Info>
 
 ## What you can run
@@ -35,8 +37,9 @@ curl -s -X POST https://powerhq-playground-api.powerhq.workers.dev/graphql \
   -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
 ```
 
-Responses carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` so a client can
-see its own budget. Over the limit the endpoint returns `429` with a GraphQL-shaped error.
+Responses carry `X-RateLimit-Limit` and `X-RateLimit-Remaining` so a client can see what it has left.
+Once the allowance is used up the endpoint returns `429` with a GraphQL-shaped error, and it does not
+refill — an API key is the way forward from there.
 
 ## For AI agents
 
