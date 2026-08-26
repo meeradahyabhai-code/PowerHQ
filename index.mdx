@@ -1,66 +1,114 @@
 ---
-title: "PowerHQ Plan Data API"
-sidebarTitle: "Home"
-description: "Query residential and business electricity plans, pricing, utilities, and enrollment across U.S. deregulated markets via a single GraphQL endpoint."
+title: "Integrate with PowerHQ"
+sidebarTitle: "Integrate with PowerHQ"
+description: "One platform for U.S. retail energy — plans, pricing, enrollment and compliance. Choose the integration that fits what you're building, from a shared link to a full API build."
 ---
 
-The PowerHQ Plan Data API gives you a single GraphQL endpoint to retrieve retail electricity plans, component-level pricing, utility (TDU) information, and partner-stamped enrollment URLs across every deregulated U.S. market PowerHQ supports — including Texas, Pennsylvania, Ohio, Illinois, and New Jersey.
+Retail energy is a hard market to enter and an easy one to underestimate. Every supplier has its own
+contract, its own API, its own enrollment logic. Every state has its own compliance rules. PowerHQ
+turns all of it into one integration.
+
+**You build the experience. We power the infrastructure.**
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="bolt" href="/quickstart">
-    Make your first API call in minutes with a working GraphQL example
+  <Card title="Try it right now" icon="play" href="/playground">
+    Run real queries against live production data. No key, no signup, no conversation.
   </Card>
-  <Card title="Authentication" icon="key" href="/authentication">
-    Learn how to pass your API key. One header, no IP allow-listing
-  </Card>
-  <Card title="Query Reference" icon="magnifying-glass" href="/queries/residential-plans">
-    Explore all six queries: plans, utilities, pricing, and more
-  </Card>
-  <Card title="Reading Pricing" icon="chart-line" href="/concepts/pricing">
-    Understand advertised vs. all-in rates across Texas and other markets
+  <Card title="Choose your integration" icon="route" href="/integrations">
+    Three ways to launch — a link, an embed, or a full API build. Compare them side by side.
   </Card>
 </CardGroup>
 
-## What you can do
+## What PowerHQ handles for you
+
+Behind whichever path you choose, the same platform is doing the hard part.
 
 <CardGroup cols={3}>
-  <Card title="Residential Plans" icon="house" href="/queries/residential-plans">
-    Fetch plans by ZIP code or utility ID with per-kWh rates at 500, 1,000, and 2,000 kWh
+  <Card title="Supplier network" icon="plug">
+    The largest provider network of any platform. One relationship instead of dozens of contracts.
   </Card>
-  <Card title="Business Plans" icon="building" href="/queries/business-plans">
-    Look up commercial electricity plans with annual usage-based pricing
+  <Card title="Live pricing" icon="chart-line">
+    Rates and availability updated directly from supplier systems, not scraped or cached.
   </Card>
-  <Card title="Utility Lookup" icon="tower-broadcast" href="/queries/utilities">
-    Find the TDU(s) serving any ZIP code in a supported deregulated market
+  <Card title="Hosted checkout" icon="lock">
+    PowerHQ owns the contract, eSign, credit check and fulfillment. **No PII risk on your side.**
   </Card>
-  <Card title="Start Dates" icon="calendar" href="/queries/next-start-date">
-    Get the earliest available service start date for a switch or move-in
+  <Card title="Compliance" icon="scale-balanced">
+    Licensing and regulatory workflows, state by state, maintained by us.
   </Card>
-  <Card title="Service Accounts" icon="file-lines" href="/queries/utility-accounts">
-    Search utility service accounts by address or account number
+  <Card title="Every deregulated market" icon="map">
+    Texas, Pennsylvania, Ohio, Illinois, New Jersey and more. The experience adapts to the customer's market.
   </Card>
-  <Card title="Energy Info" icon="leaf" href="/queries/energy-info-by-state">
-    Retrieve average rates and renewable generation mix by state
+  <Card title="Residential and business" icon="building">
+    Both supported by default. Support one or both, your choice.
   </Card>
 </CardGroup>
 
-## How it works
+## What it replaces
+
+<Columns cols={2}>
+  <div>
+    **Without PowerHQ**
+
+    - Negotiate contracts with dozens of suppliers
+    - Integrate outdated, inconsistent supplier APIs
+    - Build enrollment submission logic per provider
+    - Maintain compliance workflows state by state
+    - Carry the security and PII risk yourself
+    - Handle licensing and regulatory exposure
+  </div>
+  <div>
+    **With PowerHQ**
+
+    - One live, production integration
+    - The acquisition flow is enabled end to end
+    - PowerHQ-hosted checkout, no PII risk
+    - Full control of your own UX
+    - $0 upfront cost
+    - Live in days or weeks, not months
+  </div>
+</Columns>
+
+## Who builds on PowerHQ
+
+If your product already has a relationship with the customer, energy is a natural extension — you
+know their address, you have their trust, and their electricity bill is one of the largest recurring
+costs you can help them cut.
+
+<CardGroup cols={3}>
+  <Card title="Cost optimization tools" icon="piggy-bank">
+    You already save people money on one household bill. Electricity is the next one, and the switch is a few clicks.
+  </Card>
+  <Card title="Consumer energy apps" icon="mobile">
+    Monitoring, alerts and rate tracking, with a real plan to move the customer to when you find them a better one.
+  </Card>
+  <Card title="Fintech" icon="credit-card">
+    Bill and spend data you already hold, turned into a concrete saving instead of a chart.
+  </Card>
+  <Card title="Solar software" icon="sun">
+    Pair generation with the right retail plan, including buyback and time-of-use structures.
+  </Card>
+  <Card title="Procurement tools" icon="briefcase">
+    Commercial plan sourcing for business customers, priced on their actual annual usage.
+  </Card>
+  <Card title="Embedded commerce" icon="cart-shopping">
+    Movers, real estate, home services — anywhere a customer is already changing address.
+  </Card>
+</CardGroup>
+
+## Start here
 
 <Steps>
-  <Step title="Get your credentials">
-    Contact your PowerHQ representative to receive an API key. That key is the only credential you need — there is no IP allow-listing to arrange. To try the API before you have one, use the [playground](/playground).
+  <Step title="See the data">
+    Open the [playground](/playground) and run a real query. Nothing to sign, no key to request.
   </Step>
-  <Step title="Choose your environment">
-    Use the **certification** endpoint (`eapi.cert.powerhq.co/graphql`) for integration testing and the **production** endpoint (`eapi.prod.powerhq.co/graphql`) for live traffic.
+  <Step title="Pick your path">
+    [Compare the three integrations](/integrations) and choose the one that matches how much you want to build.
   </Step>
-  <Step title="Send a GraphQL query">
-    POST your query with the `x-api-key` header. Request exactly the fields you need and the API returns only those fields as JSON.
+  <Step title="Build">
+    For the API path, the [quickstart](/quickstart) gets you to a working call, then the [query reference](/queries/residential-plans) covers every field.
   </Step>
-  <Step title="Display plans and surface enrollment">
-    Render plans with their disclosure documents and use the partner-stamped `enrollmentUrl` or `headlessEnrollmentUrl` to hand customers off to the enrollment flow.
+  <Step title="Go live">
+    Your partner manager issues keys, reviews your plan display for accuracy, and switches you to production.
   </Step>
 </Steps>
-
-<Note>
-  The PowerHQ Plan Data API is available to approved partners only. To request access, contact your PowerHQ representative.
-</Note>
