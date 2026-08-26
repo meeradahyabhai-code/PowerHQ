@@ -1,10 +1,10 @@
 ---
-title: "API Authentication: Keys, IP Allow-Listing, and Errors"
+title: "API Authentication: Keys, Environments, and Errors"
 sidebarTitle: "Authentication"
-description: "Secure every PowerHQ API request with your API key and a registered server IP address — both are required before any call will succeed."
+description: "Authenticate every PowerHQ API request with your API key. No IP allow-listing, no OAuth handshake — the key alone authenticates the call."
 ---
 
-The PowerHQ Plan Data API uses a two-factor authentication model: every request must carry a valid **API key** in an HTTP header, and the request must originate from a **server IP address** that has been registered on the allow-list. Both factors are checked on every call — a valid key from an unregistered IP is still rejected, and a listed IP with a missing or invalid key is equally refused.
+Authentication is a single step: put your **API key** in the `x-api-key` header. That is the whole model. There is no OAuth exchange, no token to refresh, and **no IP allow-listing** — the key alone authenticates the request, so you can call the API from anywhere: your servers, a laptop, a serverless function with a rotating egress IP, or CI.
 
 ## Your API Key
 
@@ -53,15 +53,23 @@ console.log(data);
 
 </CodeGroup>
 
-## IP Allow-Listing
+## Where You Can Call From
 
-Your server's egress IP address must be registered with PowerHQ before any request will succeed, regardless of whether your API key is valid. This requirement applies to both environments.
+**Nowhere is off-limits.** IP allow-listing used to be required and no longer is. Anything that can
+make an HTTPS request and set a header can call the API:
 
-Contact your PowerHQ representative to register your IP address(es). When submitting IPs, keep the following in mind:
+- Serverless and edge runtimes with rotating egress IPs (Lambda, Cloudflare Workers, Vercel)
+- Containers and autoscaling groups whose IPs change on every deploy
+- CI pipelines and local development machines
 
-- **Use a static egress IP.** Dynamic or residential IP addresses are not appropriate — they change over time and will cause intermittent `403` errors that are difficult to diagnose.
-- **Register all outbound IPs.** If your infrastructure uses multiple egress addresses (for example, across availability zones or data centers), submit all of them.
-- **Allow time for propagation.** Newly registered IPs typically become active within one business day. Coordinate with your PowerHQ representative if you need expedited activation.
+Because the key is the only credential, keep it server-side. Never ship it in a browser bundle, a
+mobile app, or a public repository. If you need something a browser can call, put a thin proxy of
+your own in front of it and keep the key on the proxy.
+
+<Tip>
+  Want to try the API before you have a key at all? The [playground](/playground) runs real queries
+  against production with no key and no signup.
+</Tip>
 
 ## Environments
 
@@ -81,7 +89,7 @@ Both environments enforce the same authentication requirements. Use Certificatio
 ### 403 Forbidden
 
 <Warning>
-  A `403 Forbidden` response means either your API key is missing or invalid, **or** your request originated from an IP address that is not on the allow-list. The response body does not distinguish between the two cases. Verify both your `x-api-key` header value and your server's egress IP when debugging a 403.
+  A `403 Forbidden` response means exactly one thing: the `x-api-key` header is missing, malformed, or not a valid key for that environment. Where the request came from is irrelevant. Check that the header is present, that the key has no stray whitespace, and that you are using the right key for the environment you are calling — staging and production keys are different.
 </Warning>
 
 ### 400 Bad Request
