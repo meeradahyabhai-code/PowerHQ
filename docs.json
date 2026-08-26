@@ -15,13 +15,17 @@
   "navbar": {
     "links": [
       {
+        "label": "powerhq.co",
+        "href": "https://www.powerhq.co/for-developers"
+      },
+      {
         "label": "Support",
         "href": "mailto:support@powerhq.co"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Get Access",
+      "label": "Get API access",
       "href": "mailto:support@powerhq.co"
     }
   },
@@ -31,7 +35,14 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Integrate with PowerHQ",
+            "pages": [
+              "index",
+              "integrations"
+            ]
+          },
+          {
+            "group": "Plan Data API",
             "pages": [
               "introduction",
               "quickstart",

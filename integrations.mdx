@@ -1,0 +1,108 @@
+---
+title: "Choose your integration"
+sidebarTitle: "Choose your integration"
+description: "Affiliate link, embedded iFrame, or the Plan Data API — compare what you build, how long it takes, and how much control you keep."
+---
+
+Three ways to put energy shopping in front of your customers. They differ in one dimension: **how
+much you build versus how much control you keep.** Everything behind the checkout is identical.
+
+| | Affiliate link | Embedded iFrame | Plan Data API |
+|---|---|---|---|
+| **You build** | Nothing | Nothing | Your own UI |
+| **Engineering needed** | None | None | Yes |
+| **Where the customer shops** | On PowerHQ | On your site, in an embed | In your product |
+| **Branding** | PowerHQ | Your fonts and colors | Entirely yours |
+| **Control of the experience** | None | Layout and brand | Complete |
+| **Time to live** | Days | Days | Weeks |
+| **Checkout and enrollment** | PowerHQ | PowerHQ | PowerHQ-hosted |
+| **Compliance and PII** | PowerHQ | PowerHQ | PowerHQ |
+| **Upfront cost** | $0 | $0 | $0 |
+
+<Info>
+  You are not locked in. Partners commonly start with a link or an embed to prove the channel
+  converts, then move to the API once energy earns a permanent place in the product.
+</Info>
+
+## Affiliate link
+
+**Share one link. Nothing to build.**
+
+You get a personal referral link carrying your partner code. Post it on your site, email it, or share
+it in person. When someone you refer shops and enrolls, the sign-up is credited to you.
+
+There is no website requirement, no plugin and no developer. If you can paste a link, you're ready.
+Most affiliates are set up and sharing within the same week.
+
+**Best when** you have an audience but not a product surface to embed into — a newsletter, a
+community, a brokerage, a services business.
+
+<Card title="Affiliate onboarding guide" icon="link" href="https://powerhq-partner-onboarding.pages.dev/affiliate-onboarding">
+  Answer a few questions and submit. Your partner manager sends the agreement and your referral link.
+</Card>
+
+## Embedded iFrame
+
+**Our shopping experience, inside your site, in your brand.**
+
+The iFrame embeds PowerHQ's energy shopping and enrollment flow directly into your page. Visitors
+compare plans, sign up and complete enrollment without leaving your site. We configure fonts and
+colors to match, and customer emails can carry your name.
+
+The experience adapts to the customer's market automatically, supports residential and business by
+default, and is continually optimized for conversion — you inherit that work rather than doing it.
+There is nothing for your engineering team to build.
+
+**Best when** you want energy live on your own site quickly, and the shopping UX is not where you
+want to spend engineering time.
+
+<Note>
+  The iFrame test environment is access-restricted, so onboarding collects the IP addresses your team
+  will test from. This applies to the test site only — it is not a requirement of the API.
+</Note>
+
+<Card title="iFrame onboarding guide" icon="window" href="https://powerhq-partner-onboarding.pages.dev/">
+  Branding, customer types and test links. Typically live in days, not months.
+</Card>
+
+## Plan Data API
+
+**You render the plans. We run everything behind checkout.**
+
+A single GraphQL endpoint returns residential and business plans for any deregulated ZIP code, with
+component-level pricing, supplier scores, disclosure documents and a ready-to-use enrollment URL per
+plan. You build the interface exactly as you want it; when the customer picks a plan, you hand them to
+the PowerHQ-hosted checkout and we take it from there — contract, eSign, credit, fulfillment.
+
+One endpoint, always `POST`, your key in the `x-api-key` header. Ask for exactly the fields you need
+and get back just those.
+
+**Best when** the energy experience needs to live natively inside your product, or you want to rank,
+filter and present plans against data you already hold about the customer.
+
+<CardGroup cols={2}>
+  <Card title="Try it with no key" icon="play" href="/playground">
+    Real queries against live production data, right now.
+  </Card>
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Your first working call, then the full query reference.
+  </Card>
+</CardGroup>
+
+<Card title="API onboarding guide" icon="key" href="https://powerhq-partner-onboarding.pages.dev/api-onboarding">
+  Keys, environments, the plan-display accuracy review, and going live.
+</Card>
+
+## What every path has in common
+
+- **PowerHQ owns the regulated parts.** Supplier contracts, licensing, state-by-state compliance,
+  enrollment operations and customer service.
+- **Checkout is hosted by PowerHQ**, so payment and personal data never land in your systems.
+- **Every deregulated market**, residential and business, from one integration.
+- **$0 upfront.** Compensation terms are set in Exhibit A of your partner agreement.
+
+## Not sure yet?
+
+Open the [playground](/playground) and run a query. It costs nothing, needs no key, and returns the
+same live production data any of the three paths is built on. If the data supports what you want to
+build, the integration choice is just a question of how much you want to own.
