@@ -14,11 +14,11 @@ HTTP errors occur at the transport layer and mean the API never processed your G
 
 | Status | Cause | Resolution |
 |--------|-------|------------|
-| `403 Forbidden` | Missing or invalid `x-api-key` request header, or the request originated from a non-allow-listed IP address | Verify your API key is present and correct. Confirm your server's egress IP address is allow-listed in your PowerHQ account settings. |
+| `403 Forbidden` | Missing or invalid `x-api-key` request header | Verify the header is present, the key has no stray whitespace, and it is the right key for the environment you are calling. |
 | `400 Bad Request` | Malformed HTTP request body — the server could not parse the request as valid JSON or could not locate a `query` field | Ensure your request body is valid JSON and includes a `query` key containing your GraphQL operation string. |
 
 <Warning>
-  A `403 Forbidden` response can result from **either** an invalid API key **or** a non-allow-listed IP address. Both conditions produce the same status code with no additional detail in the body. If you receive a 403 after confirming your API key is correct, check whether your server IP has been added to your allow-list.
+  A `403 Forbidden` means the `x-api-key` header is missing, malformed, or not valid for that environment. Where the request originated from does not matter — IP allow-listing is not used. Staging and production keys are different, so a key that works against certification will 403 against production.
 </Warning>
 
 ---

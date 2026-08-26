@@ -9,12 +9,9 @@ This guide walks you through everything you need to go from zero to live plan da
 <Steps>
 
   <Step title="Get your credentials">
-    The PowerHQ Plan Data API is available to approved partners only. Before you can make any request, you need two things:
+    You need one thing: **an API key**, a static secret you send on every request in the `x-api-key` HTTP header. There is no IP allow-listing to arrange and no static egress IP to reserve — the key alone authenticates the call, so it works from serverless functions, containers and CI just as well as from a fixed server.
 
-    1. **An API key** — a static secret you'll send on every request in the `x-api-key` HTTP header.
-    2. **IP allow-listing** — your server's egress IP address must be registered with PowerHQ before any request will succeed.
-
-    Contact your PowerHQ representative to receive your API key and to submit the static IP address(es) your integration will use. Requests from a non-listed IP are rejected with `403 Forbidden` even if the key is valid.
+    Contact your PowerHQ representative to receive your key. Want to run real queries before you have one? The [playground](/playground) needs no key at all.
   </Step>
 
   <Step title="Choose your environment">
@@ -123,7 +120,7 @@ This guide walks you through everything you need to go from zero to live plan da
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/authentication">
-    Learn how the two-factor authentication model works — API key plus IP allow-listing — and how to handle 403 errors in production.
+    How the `x-api-key` header works, why there is nothing else to configure, and how to handle 403 errors in production.
   </Card>
   <Card title="Reading Pricing" icon="chart-line" href="/concepts/pricing">
     Understand the difference between `price`, `allInRateUsdPerKwh`, and `avgMonthlyBillUsd`, and when to display each.
