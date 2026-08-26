@@ -1,0 +1,64 @@
+---
+title: Using the playground
+description: What the free playground can run, its limits, and how to call it from code or an AI agent without a key.
+---
+
+The [playground](/playground) is backed by a public endpoint that needs no API key, no signup and no
+browser. Anything you can run in the playground, you can run from a script or an AI coding assistant.
+
+<Info>
+  **10 calls per IP per day.** Loading the playground and browsing the schema are free — only real
+  queries count. [Request an API key](mailto:support@powerhq.co) to call production directly with no cap.
+</Info>
+
+## What you can run
+
+| Query | What it answers |
+|---|---|
+| [`residentialPlans`](/queries/residential-plans) | Residential plans, rates, fees and enrollment links for a ZIP |
+| [`businessPlans`](/queries/business-plans) | Commercial plans for a ZIP and annual usage |
+| [`utilities`](/queries/utilities) | Which utilities serve a ZIP code |
+| [`nextStartDate`](/queries/next-start-date) | Earliest available service start date |
+| [`energyInfoByState`](/queries/energy-info-by-state) | State average rate and generation mix |
+
+## What it will not run
+
+`utilityAccounts` is **not available** in the public playground. It looks up real customer service
+accounts by street address, so it stays behind an issued API key. The playground is read-only:
+mutations and subscriptions are rejected.
+
+## Calling it from code
+
+```bash
+curl -s -X POST https://powerhq-playground-api.powerhq.workers.dev/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
+```
+
+Responses carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` so a client can
+see its own budget. Over the limit the endpoint returns `429` with a GraphQL-shaped error.
+
+## For AI agents
+
+**Schema introspection is enabled and does not count against the limit**, so an agent can discover the
+whole API before writing a single query:
+
+```bash
+curl -s -X POST https://powerhq-playground-api.powerhq.workers.dev/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ __schema { queryType { fields { name } } } }"}'
+```
+
+That returns every available query with its arguments and return types. From there, build a normal
+GraphQL query and post it to the same endpoint.
+
+## Moving to your own key
+
+With an issued key you skip the playground and call production directly, with no per-day cap:
+
+```bash
+curl -s -X POST https://eapi.prod.powerhq.co/graphql \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ utilities(zipCode: \"75231\") { id name } }"}'
+```
