@@ -65,9 +65,23 @@ The `rateType` field on `ResidentialPlan` tells you the pricing structure of the
 
 ## priceType parameter
 
-When you query a plan's top-level `price` field, the default behavior is **seasonalized** — the price reflects the customer's usage pattern adjusted for seasonal variation, which is the most accurate estimate of what they'll pay on an annualized basis.
+`priceType` is a **`String`**, not an enum, so the value must be quoted: `priceType: "FLAT"`. An
+unquoted `priceType: FLAT` is rejected as a validation error.
 
-Pass `priceType: FLAT` to instead price the plan at the exact `monthlyUsage` value you supply, with no seasonal adjustment. Use `FLAT` when you want a precise rate at a single static usage level rather than a seasonal average.
+| Value | Behavior |
+|---|---|
+| `"SEASONALIZED"` | The default, also applied when you omit the argument. Prices the plan against a seasonal usage curve built around your `monthlyUsage`, which is the most accurate estimate of what the customer pays on an annualized basis. |
+| `"FLAT"` | Prices the plan at the exact `monthlyUsage` value you supply, every month, with no seasonal adjustment. Use it when you want a precise rate at a single static usage level. |
+
+<Warning>
+  `priceType` moves more than the top-level `price`. It also moves every
+  `rates[].allInRateUsdPerKwh` and `rates[].avgMonthlyBillUsd`, even though those rows stay pinned to
+  500 / 1000 / 2000 kWh. Do not mix a `FLAT` bill estimate with a `SEASONALIZED` rate card — pick one
+  `priceType` for the whole response.
+</Warning>
+
+Any other string is accepted without error and falls through to the default seasonalized behavior, so
+a typo will not be reported back to you.
 
 ## PlanRate type
 
