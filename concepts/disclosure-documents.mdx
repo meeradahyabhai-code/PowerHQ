@@ -23,16 +23,14 @@ Additional document types may appear on any plan regardless of market: `PREPAID_
 Request the `documents` field on any `residentialPlans` query to retrieve the full set of disclosure links for each plan.
 
 ```graphql
-query PlansWithDocuments($input: ResidentialPlansInput!) {
-  residentialPlans(input: $input) {
-    plans {
-      id
-      name
-      documents {
-        type
-        url
-        title
-      }
+{
+  residentialPlans(zipCode: "77007", monthlyUsage: 1000) {
+    id
+    title
+    documents {
+      type
+      url
+      title
     }
   }
 }
@@ -45,24 +43,31 @@ The response includes one entry per document associated with the plan:
   "documents": [
     {
       "type": "EFL",
-      "url": "https://example.com/docs/efl-plan-123.pdf",
-      "title": "Electricity Facts Label"
+      "url": "https://enroll.example-supplier.com/EmailHTML/efl.aspx?RateID=3578&BrandID=3",
+      "title": null
     },
     {
       "type": "TOS",
-      "url": "https://example.com/docs/tos-plan-123.pdf",
-      "title": "Terms of Service"
+      "url": "https://enroll.example-supplier.com/App_Assets/EnrollmentFiles/TOS.pdf",
+      "title": null
     },
     {
       "type": "YRAC",
-      "url": "https://example.com/docs/yrac-plan-123.pdf",
-      "title": "Your Rights as a Customer"
+      "url": "https://enroll.example-supplier.com/App_Assets/EnrollmentFiles/YRAC.pdf",
+      "title": null
     }
   ]
 }
 ```
 
-The `title` field is optional and may be `null`. Use the `type` value as the display label fallback when `title` is absent.
+<Warning>
+  **`title` is `null` on production plans today.** Build your display label from `type`, and treat
+  `title` as an override that may start arriving later. A UI that renders `title` directly will show
+  blanks.
+</Warning>
+
+Note also that the document URLs are the supplier's own, not PowerHQ-hosted, so they can move without
+notice. Link to them, do not cache or mirror them.
 
 ## Display requirements
 

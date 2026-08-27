@@ -71,7 +71,7 @@ Some fields on `ResidentialPlan` and `UtilityAccount` are nullable by design. Th
 - `utilityCode` — may not be populated for all service territories
 - `stateCode` — may not be populated for all plans
 - `createdAt` — catalog entry timestamp may be absent for older plans
-- `supplierScores` — the entire object is `null` when the supplier has no ratings on file; individual score categories within the object (`energyBotRating`, `plansAndRates`, `customerService`, `renewablePlans`, `pucRating`) may also be independently `null`
+- `supplierScores` — the entire object is `null` when the supplier has no ratings on file; individual score categories within the object (`powerHqRating`, `plansAndRates`, `customerService`, `renewablePlans`, `pucRating`) may also be independently `null`
 
 **Arrays that can legitimately be empty:**
 

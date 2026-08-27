@@ -90,7 +90,8 @@ type ResidentialPlan {
 </ResponseField>
 
 <ResponseField name="tags" type="[PlanTag!]!" required>
-  Descriptive tags applied to the plan (e.g., "best value", "green energy"). May be an empty array.
+  Plan features and promotions, keyed by an upper-snake-case identifier such as
+  `SATISFACTION_GUARANTEE`. Frequently an empty array. See [`PlanTag`](#plantag).
 </ResponseField>
 
 <ResponseField name="supplierScores" type="SupplierScores">
@@ -341,7 +342,7 @@ Aggregated ratings for a supplier across several dimensions. The entire `supplie
 
 ```graphql
 type SupplierScores {
-  energyBotRating: Float
+  powerHqRating: Float
   plansAndRates: Float
   customerService: Float
   renewablePlans: Float
@@ -349,8 +350,8 @@ type SupplierScores {
 }
 ```
 
-<ResponseField name="energyBotRating" type="Float">
-  Overall EnergyBot composite score for the supplier. Nullable.
+<ResponseField name="powerHqRating" type="Float">
+  Overall PowerHQ composite score for the supplier. Nullable.
 </ResponseField>
 
 <ResponseField name="plansAndRates" type="Float">
@@ -394,14 +395,15 @@ type PlanDocument {
 </ResponseField>
 
 <ResponseField name="title" type="String">
-  Human-readable display name for the document. Nullable.
+  Human-readable display name for the document. Nullable, and `null` across production plans today —
+  derive your display label from `type`.
 </ResponseField>
 
 ---
 
 ### PlanTag
 
-A descriptive label applied to a plan, used for surfacing features, promotions, or recommendation signals in a UI.
+A plan feature or promotion, used for surfacing benefits and filters in a UI.
 
 ```graphql
 type PlanTag {
@@ -413,19 +415,25 @@ type PlanTag {
 ```
 
 <ResponseField name="key" type="String!" required>
-  Machine-readable tag identifier (e.g., `"bestValue"`, `"greenEnergy"`).
+  Machine-readable tag identifier in upper snake case. Keys observed on production include
+  `SATISFACTION_GUARANTEE`, `AUTO_PAY` and `RATE_DISCOUNT`.
 </ResponseField>
 
 <ResponseField name="value" type="String">
-  Optional structured value associated with the tag key. Nullable.
+  The supplier's own description of the benefit, and in practice the field to display. For
+  `SATISFACTION_GUARANTEE` it carries the guarantee terms; for `RATE_DISCOUNT` it can carry a
+  bracketed list of time-of-use rates. Nullable, and `null` for tags that need no elaboration such as
+  `AUTO_PAY`.
 </ResponseField>
 
 <ResponseField name="label" type="String">
-  Human-readable display label for the tag. Nullable.
+  Short display label for the tag. Nullable, and `null` across production plans today — do not build a
+  UI that depends on it. Use `value`, or map `key` to your own copy.
 </ResponseField>
 
 <ResponseField name="reasons" type="[String!]">
-  List of explanatory strings describing why this tag was applied to the plan. Nullable — may be absent or empty.
+  List of explanatory strings describing why this tag was applied to the plan. Nullable, and `null`
+  across production plans today.
 </ResponseField>
 
 ---

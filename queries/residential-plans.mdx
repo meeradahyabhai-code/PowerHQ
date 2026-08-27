@@ -21,10 +21,15 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ParamField>
 
 <ParamField query="priceType" type="String">
-  Pricing mode applied to the `price` field.
+  Pricing mode applied to `price` **and** to every row in `rates`. A `String`, not an enum, so the
+  value must be quoted.
 
-  - **Omitted / default** — seasonalized pricing that accounts for usage variation across months.
+  - `"SEASONALIZED"` — the default, also applied when the argument is omitted. Prices against a
+    seasonal usage curve built around `monthlyUsage`.
   - `"FLAT"` — prices the plan at the exact `monthlyUsage` value with no seasonal adjustment.
+
+  An unquoted `priceType: FLAT` is a validation error. Any other string is accepted silently and
+  falls through to seasonalized.
 
   See [Pricing Concepts](/concepts/pricing) for the difference between advertised and all-in rates.
 </ParamField>
@@ -40,7 +45,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
     rateType
     supplier { name }
     rates { usageKwh allInRateUsdPerKwh avgMonthlyBillUsd }
-    supplierScores { energyBotRating plansAndRates customerService renewablePlans pucRating }
+    supplierScores { powerHqRating plansAndRates customerService renewablePlans pucRating }
     headlessEnrollmentUrl
   }
 }
@@ -62,7 +67,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
           { "usageKwh": 2000, "allInRateUsdPerKwh": 0.13545, "avgMonthlyBillUsd": 270.9 }
         ],
         "supplierScores": {
-          "energyBotRating": 4.7,
+          "powerHqRating": 4.7,
           "plansAndRates": 4.0,
           "customerService": 5.0,
           "renewablePlans": 2.0,
@@ -209,8 +214,8 @@ The `residentialPlans` query returns a list of available retail electricity plan
   Supplier reputation scores sourced independently from plan pricing. This field is **nullable** — it is `null` when score data is unavailable for a supplier.
 
   <Expandable title="supplierScores fields">
-    <ResponseField name="energyBotRating" type="Float">
-      Overall EnergyBot rating for the supplier, on a scale of 0–5. Nullable.
+    <ResponseField name="powerHqRating" type="Float">
+      Overall PowerHQ rating for the supplier, on a scale of 0–5. Nullable.
     </ResponseField>
 
     <ResponseField name="plansAndRates" type="Float">
@@ -248,9 +253,12 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ResponseField>
 
 <ResponseField name="tags" type="PlanTag[]">
-  Labels applied to the plan for filtering and display purposes (e.g., `"No Deposit"`, `"Green"`, `"Prepaid"`).
+  Plan features and promotions, keyed by an upper-snake-case identifier. Observed keys on production
+  include `SATISFACTION_GUARANTEE`, `AUTO_PAY` and `RATE_DISCOUNT`. See [`PlanTag`](/reference/types#plantag).
 
   <Note>
-    `tags` may be an empty array.
+    `tags` is frequently an empty array — most plans carry none, and outside Texas the array is
+    usually empty altogether. Read the tag's `value` for the human-readable description; `label` is
+    currently `null` on production plans.
   </Note>
 </ResponseField>
