@@ -1,0 +1,149 @@
+---
+title: "Drop-in Storefront"
+sidebarTitle: "Drop-in Storefront"
+description: "How the Storefront embed works: the link structure, every parameter, sizing, ZIP pre-loading, partner codes, testing and the three reports you get."
+---
+
+The Storefront is our energy shopping and enrollment experience, running inside a page on your site.
+Visitors compare plans, sign up and complete enrollment without leaving you. PowerHQ handles supplier
+relationships, compliance, enrollment operations and customer service behind it.
+
+**No developer required.** It goes on a page the same way a YouTube video or a Google Map does: one
+`iframe`, pasted once by whoever looks after your website. Everything below is optional detail for
+tuning placements, not work you have to do to launch.
+
+<Note>
+  This page is the reference. To actually get set up, work through the
+  [Storefront onboarding guide](https://powerhq-partner-onboarding.pages.dev/), which collects your
+  branding, customer types and test IPs, and starts your agreement.
+</Note>
+
+## The link structure
+
+Your partner manager sends you a pre-built link. Every Storefront link follows the same shape, and
+knowing the pieces lets you run different placements on different pages.
+
+```
+https://www.powerhq.co/partner-app.html?utm_source=[PARTNER_CODE]&utm_medium=referral&utm_campaign=[CAMPAIGN]#/[partner_code]?ftype=DEFAULT_PARTNER&service_type=[TYPE]&zip_code=[ZIP]
+```
+
+| Piece | What it does |
+|---|---|
+| `utm_source=[PARTNER_CODE]` | Your assigned partner code, parent or child. Identifies you on every conversion. |
+| `utm_medium=referral` | Fixed. Leave as is. |
+| `utm_campaign=[CAMPAIGN]` | Any value you choose for attribution. Passed straight through to your reports. |
+| `#/[partner_code]` | Your partner code again, lowercase. |
+| `ftype=DEFAULT_PARTNER` | Fixed. Leave as is. |
+| `service_type=[TYPE]` | Optional. `BUSINESS` or `RESIDENTIAL` to limit a placement to one customer type. Omit to support both. |
+| `zip_code=[ZIP]` | Optional. Pre-loads a ZIP you have already collected. |
+
+The test environment uses the same structure on `www.dev.powerhq.co`. Production links are identical
+apart from the domain.
+
+<Warning>
+  Send the link exactly as your partner manager built it, changing only the optional parameters above.
+  Everything after the `#` is a URL fragment, which behaves differently from a normal query string, so
+  reordering or reformatting it is the fastest way to break attribution.
+</Warning>
+
+## Embedding it
+
+### Set the width to 100%
+
+The experience is responsive, so give the iframe `width="100%"` and let it adapt to desktop, tablet
+and mobile rather than pinning it to a fixed pixel width.
+
+```html
+<iframe
+  src="https://www.powerhq.co/partner-app.html?utm_source=YOUR_CODE&utm_medium=referral&utm_campaign=homepage#/your_code?ftype=DEFAULT_PARTNER"
+  width="100%"
+  height="900"
+  frameborder="0"
+></iframe>
+```
+
+### Pre-load a ZIP code
+
+If you already collect a ZIP on your site, pass it in and the customer lands straight on plan results
+for their area instead of typing it again.
+
+```
+&zip_code=75035
+```
+
+### One Storefront, different placements
+
+You can run links with different parameters in different parts of your site. Point the link on your
+commercial pages at `service_type=BUSINESS` and the one on your consumer pages at
+`service_type=RESIDENTIAL`, and each placement shows only the relevant plans.
+
+## What you get without configuring it
+
+- **Every deregulated market, one embed.** The experience recognizes the customer's market
+  automatically. You do not maintain a version per state.
+- **Residential and business by default.** Restrict a placement with `service_type` when you want to.
+- **Your brand.** We apply your fonts and colors during setup, and customer emails can be sent under
+  your own sender name rather than PowerHQ.
+
+## Partner codes
+
+You get one partner code. If you want to track activity separately by site, channel, campaign group or
+sub-brand, we can set up a **parent code with child codes underneath it**. Every conversion is
+reported against the code that produced it, parent or child.
+
+Combined with `utm_campaign`, that gives you two independent tracking dimensions.
+
+## Testing
+
+Your test links point at the access-restricted test environment, so onboarding collects the IP
+addresses your team will test from. That restriction applies to testing only, not to your live
+Storefront.
+
+Put the iframe on a staging page and run the flow as a customer would. Confirm:
+
+<Steps>
+  <Step title="It renders at every width">
+    Check `width="100%"` behaves on desktop and mobile.
+  </Step>
+  <Step title="ZIP pre-loading works">
+    Only if you are passing `&zip_code=` from your site.
+  </Step>
+  <Step title="Branding looks native">
+    Fonts and colors should read as part of your page, not as a visitor.
+  </Step>
+  <Step title="The right customer types appear">
+    Per placement, if you are using `service_type`.
+  </Step>
+  <Step title="Your codes flow through">
+    Your partner code and `utm_campaign` values should appear in the daily conversion file.
+  </Step>
+</Steps>
+
+Once testing passes, your partner manager sends production links with the same structure on the
+production domain, and you can go live immediately.
+
+## Reporting and attribution
+
+You receive three reports.
+
+| Report | What it gives you | Cadence |
+|---|---|---|
+| **PostHog dashboard** | Funnel and traffic analytics for your Storefront | Near real-time |
+| **Daily conversion file** | Every conversion with order details, your partner code and the `utm_campaign` value | Daily |
+| **Monthly commission report** | Every conversion and the payments owed to you, with the same code and campaign fields | Monthly |
+
+**Fields in the daily conversion file:** Order ID, Conversion DateTime, Estimated Conversion Value,
+Customer Name, UTM Campaign, Referral Code, Term Length, Start Date, Annual Usage, Customer Type.
+
+<Tip>
+  Whatever sits in `utm_campaign` at the moment of conversion is what lands in your reports. Partners
+  use it two ways: some pass campaign details directly, others pass a unique ID and match it back to
+  the source in their own systems. Either works.
+</Tip>
+
+## Compare with the API
+
+The Storefront is the recommended path for most partners. If the energy experience has to live
+natively inside a product you already maintain, see the
+[Plan Data API](/introduction) instead, or
+[compare the two side by side](/integrations).

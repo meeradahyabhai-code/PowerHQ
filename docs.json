@@ -16,17 +16,17 @@
     "links": [
       {
         "label": "powerhq.co",
-        "href": "https://www.powerhq.co/for-developers"
+        "href": "https://www.powerhq.co/"
       },
       {
         "label": "Support",
-        "href": "mailto:support@powerhq.co"
+        "href": "https://www.powerhq.co/faq"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Get API access",
-      "href": "mailto:support@powerhq.co"
+      "label": "Get started",
+      "href": "https://www.powerhq.co/contact"
     }
   },
   "navigation": {
@@ -38,7 +38,8 @@
             "group": "Integrate with PowerHQ",
             "pages": [
               "index",
-              "integrations"
+              "integrations",
+              "storefront"
             ]
           },
           {
