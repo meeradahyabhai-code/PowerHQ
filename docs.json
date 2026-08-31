@@ -100,5 +100,8 @@
     "socials": {
       "x": "https://x.com/powerhq"
     }
+  },
+  "appearance": {
+    "default": "dark"
   }
 }

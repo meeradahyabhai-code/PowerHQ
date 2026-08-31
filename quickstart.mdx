@@ -9,7 +9,7 @@ This guide walks you through everything you need to go from zero to live plan da
 <Steps>
 
   <Step title="Get your credentials">
-    You need one thing: **an API key**, a static secret you send on every request in the `x-api-key` HTTP header. There is no IP allow-listing to arrange and no static egress IP to reserve — the key alone authenticates the call, so it works from serverless functions, containers and CI just as well as from a fixed server.
+    You need one thing: **an API key**, a static secret you send on every request in the `x-api-key` HTTP header. It works from serverless functions, containers and CI just as well as from a fixed server.
 
     Contact your PowerHQ representative to receive your key. Want to run real queries before you have one? The [playground](/playground) needs no key at all.
   </Step>
@@ -26,7 +26,7 @@ This guide walks you through everything you need to go from zero to live plan da
   </Step>
 
   <Step title="Send your first request">
-    Start with a `utilities` query — it's the simplest call and confirms that your key and IP are both working. This example looks up the transmission and distribution utility (TDU) for ZIP code 75231 (Dallas, TX).
+    Start with a `utilities` query — it's the simplest call and confirms your key is working. This example looks up the transmission and distribution utility (TDU) for ZIP code 75231 (Dallas, TX).
 
     ```bash
     curl -s -X POST https://eapi.cert.powerhq.co/graphql \

@@ -18,7 +18,7 @@ HTTP errors occur at the transport layer and mean the API never processed your G
 | `400 Bad Request` | Malformed HTTP request body — the server could not parse the request as valid JSON or could not locate a `query` field | Ensure your request body is valid JSON and includes a `query` key containing your GraphQL operation string. |
 
 <Warning>
-  A `403 Forbidden` means the `x-api-key` header is missing, malformed, or not valid for that environment. Where the request originated from does not matter — IP allow-listing is not used. Staging and production keys are different, so a key that works against certification will 403 against production.
+  A `403 Forbidden` means the `x-api-key` header is missing, malformed, or not valid for that environment. Staging and production keys are different, so a key that works against certification will 403 against production.
 </Warning>
 
 ---
