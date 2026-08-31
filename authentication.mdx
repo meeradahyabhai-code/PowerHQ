@@ -1,10 +1,10 @@
 ---
 title: "API Authentication: Keys, Environments, and Errors"
 sidebarTitle: "Authentication"
-description: "Authenticate every PowerHQ API request with your API key. No IP allow-listing, no OAuth handshake — the key alone authenticates the call."
+description: "Authenticate every PowerHQ API request with your API key: one static secret in the x-api-key header, no OAuth handshake, no token to refresh."
 ---
 
-Authentication is a single step: put your **API key** in the `x-api-key` header. That is the whole model. There is no OAuth exchange, no token to refresh, and **no IP allow-listing** — the key alone authenticates the request, so you can call the API from anywhere: your servers, a laptop, a serverless function with a rotating egress IP, or CI.
+Authentication is a single step: put your **API key** in the `x-api-key` header. That is the whole model. There is no OAuth exchange and no token to refresh.
 
 ## Your API Key
 
@@ -55,8 +55,7 @@ console.log(data);
 
 ## Where You Can Call From
 
-**Nowhere is off-limits.** IP allow-listing used to be required and no longer is. Anything that can
-make an HTTPS request and set a header can call the API:
+Anything that can make an HTTPS request and set a header can call the API:
 
 - Serverless and edge runtimes with rotating egress IPs (Lambda, Cloudflare Workers, Vercel)
 - Containers and autoscaling groups whose IPs change on every deploy
@@ -84,12 +83,15 @@ Both environments enforce the same authentication requirements. Use Certificatio
   Point your integration at the Certification environment during development. It lets you iterate safely without risking any impact to production data or customer-facing systems.
 </Tip>
 
+Onboarding asks for the IP addresses your team will be testing from, so we can enable them for the
+certification checkout flow. Sending them early keeps your first end-to-end test from waiting on us.
+
 ## Error Responses
 
 ### 403 Forbidden
 
 <Warning>
-  A `403 Forbidden` response means exactly one thing: the `x-api-key` header is missing, malformed, or not a valid key for that environment. Where the request came from is irrelevant. Check that the header is present, that the key has no stray whitespace, and that you are using the right key for the environment you are calling — staging and production keys are different.
+  A `403 Forbidden` response means the `x-api-key` header is missing, malformed, or not a valid key for that environment. Check that the header is present, that the key has no stray whitespace, and that you are using the right key for the environment you are calling — staging and production keys are different.
 </Warning>
 
 ### 400 Bad Request
