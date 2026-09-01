@@ -97,7 +97,13 @@
       "perplexity",
       "mcp",
       "cursor",
-      "vscode"
+      "vscode",
+      {
+        "title": "Copy all docs",
+        "description": "Every page as one markdown file, for handing to an AI",
+        "href": "/llms-full.txt",
+        "icon": "books"
+      }
     ]
   },
   "footer": {
