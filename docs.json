@@ -95,9 +95,6 @@
       "chatgpt",
       "claude",
       "perplexity",
-      "mcp",
-      "cursor",
-      "vscode",
       {
         "title": "Copy all docs",
         "description": "Every page as one markdown file, for handing to an AI",
