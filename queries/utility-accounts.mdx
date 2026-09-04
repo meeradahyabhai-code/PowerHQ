@@ -21,7 +21,12 @@ The `utilityAccounts` query searches existing utility service accounts by street
 </ParamField>
 
 <ParamField query="street2" type="String">
-  Street address line 2 (for example, apartment or suite number).
+  Second address line, matched **exactly** against the value the utility has on file.
+
+  Most accounts have no second line, and supplying one that does not match the stored value returns
+  zero results rather than a looser match. **Omit it unless you already know the utility's exact
+  string.** Apartment and unit numbers usually live inside `street`, in whatever format the utility
+  recorded them, so pass those as part of `street`.
 </ParamField>
 
 <ParamField query="city" type="String">
@@ -45,10 +50,10 @@ The `utilityAccounts` query searches existing utility service accounts by street
 ```graphql
 {
   utilityAccounts(
-    street: "947 STREETLIGHT STLG 250HPS"
-    city: "BROWNSVILLE"
+    street: "901 BAGBY ST"
+    city: "HOUSTON"
     state: "TX"
-    zipCode: "78521"
+    zipCode: "77002"
   ) {
     id
     accountNumber
@@ -72,24 +77,35 @@ The `utilityAccounts` query searches existing utility service accounts by street
   "data": {
     "utilityAccounts": [
       {
-        "id": "v2-CB1C1D302FC4B19F58D4F89F775AAFD6",
-        "accountNumber": "10032789448946468",
-        "utilityCode": "AEPCC",
+        "id": "v2-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "accountNumber": "1000000000000000000000",
+        "utilityCode": "CNP",
         "isBusiness": true,
         "accountStatus": "ACTIVE",
-        "displayAddress": "947 STREETLIGHT STLG 250HPS,  CAMERON COUNTY ST LIGHTS, BROWNSVILLE, TX",
+        "displayAddress": "901 BAGBY ST, HOUSTON, TX",
         "serviceAddress": {
-          "street": "947 STREETLIGHT STLG 250HPS",
-          "street2": " CAMERON COUNTY ST LIGHTS",
-          "city": "BROWNSVILLE",
+          "street": "901 BAGBY ST",
+          "street2": "",
+          "city": "HOUSTON",
           "state": "TX",
-          "zipCode": "78521"
+          "zipCode": "77002"
         }
       }
     ]
   }
 }
 ```
+
+<Note>
+  `id` and `accountNumber` above are masked. Real values are a `v2-` prefix followed by 32 hex
+  characters, and a 22-digit ESID. Everything else is exactly what this query returns today.
+</Note>
+
+<Warning>
+  A partial street matches every unit at that address. `901 BAGBY ST` returns one account, but a
+  street with many units can return dozens. Narrow with `zipCode` and `isBusiness`, and read the
+  `street` value back to see how the utility spelled the unit before querying for it.
+</Warning>
 
 ## Response fields
 
