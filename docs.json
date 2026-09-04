@@ -63,6 +63,7 @@
             "pages": [
               "queries/residential-plans",
               "queries/business-plans",
+              "queries/enrollment-url",
               "queries/utilities",
               "queries/next-start-date",
               "queries/utility-accounts",
