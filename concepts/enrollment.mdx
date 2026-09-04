@@ -4,7 +4,7 @@ sidebarTitle: "Enrollment"
 description: "Understand the two partner-stamped enrollment URLs on every plan and how attribution works so your conversions are tracked back to your account."
 ---
 
-Every plan returned by the API includes two partner-stamped enrollment URLs you can hand customers off to when they're ready to sign up. Both URLs are pre-configured with your partner code so conversions attribute to your account automatically — you do not need to add tracking parameters yourself.
+Every plan returned by the API includes two partner-stamped enrollment URLs you can hand customers off to when they're ready to sign up. Both URLs are pre-configured with your partner code so conversions attribute to your account automatically.
 
 ## Hosted enrollment (enrollmentUrl)
 
@@ -31,6 +31,52 @@ The URL contains:
 - `plan_id` — the unique plan identifier from the API
 - `zip_code` — the customer's ZIP code passed through from your query
 
+## Prefilling the enrollment
+
+The URLs on a plan start the customer at the beginning of checkout. When you already know something about the customer, [`residentialEnrollmentUrl`](/queries/residential-enrollment-url) and [`businessEnrollmentUrl`](/queries/business-enrollment-url) build a link that carries it, so they do not type it twice.
+
+Supply the customer's name and contact details through the `customer` argument, their consumption through `monthlyUsage` (residential) or `annualUsageInkWh` (business), and their service account through `utilityAccountNumber`. Each value you pass appears in the returned link and prefills the matching field at checkout.
+
+### Prefilling the service address
+
+The service address is attached through the customer's utility account, not through the address itself. It is a two-step flow.
+
+<Steps>
+  <Step title="Find the account">
+    Query [`utilityAccounts`](/queries/utility-accounts) to resolve the customer's service account. Search by `accountNumber` when the customer can give you their ESID, which is the reliable path:
+
+    ```graphql
+    { utilityAccounts(accountNumber: "1008901000158230011100") { accountNumber } }
+    ```
+
+    Searching by address works too, but the match is strict: `street` must be spelled the way the utility spelled it, unit included, and `street2` is compared exactly. Prefer the ESID whenever you can get one.
+  </Step>
+  <Step title="Pass the account number">
+    Send the `accountNumber` from that result as the `utilityAccountNumber` argument on the enrollment URL query.
+  </Step>
+  <Step title="Check the returned link">
+    The URL comes back carrying `prospect_id`, PowerHQ's identifier for that service account, and `state`. Their presence confirms the address is attached.
+  </Step>
+</Steps>
+
+<Warning>
+  Pass the `accountNumber`, not the account's `id`. `utilityAccounts` returns both, and sending the `v2-` prefixed `id` as `utilityAccountNumber` is accepted but attaches nothing — the link comes back without `prospect_id` and no error is raised. The `address` argument behaves the same way. Only `accountNumber` resolves.
+</Warning>
+
+## Campaign tracking
+
+The `utm_` parameters sit in the ordinary query string, before the `#`:
+
+```
+https://www.powerhq.co/app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=YOUR_CAMPAIGN#/redirect?...
+```
+
+Set `utm_campaign` to whatever you want to report on, the same way you would on a [Drop-in Storefront](/storefront) link. Whatever it holds when the customer converts is what appears in your daily conversion file and your monthly commission report. Some partners pass a campaign name, placement or ad set directly; others pass a unique id and match it back to the source in their own systems. Either approach works.
+
+<Warning>
+  Keep your `utm_` parameters before the `#`. Anything placed after it belongs to the application's own fragment and is not captured for attribution.
+</Warning>
+
 ## Supplier enrollment link
 
 Some plans include a `LinkType.ENROLLMENT` entry inside the `documents[]` array. This entry points directly to the **supplier's own website** and is not a PowerHQ-hosted flow.
@@ -41,9 +87,9 @@ The `documents[]` enrollment link is **not** guaranteed to be present on every p
 
 ## Attribution
 
-Your partner code replaces the `YOUR_PARTNER_CODE` placeholder shown in the example URL above. The API returns URLs already stamped with your actual code — you do not need to inject or modify any parameters before presenting the URL to the customer.
+Your partner code replaces the `YOUR_PARTNER_CODE` placeholder shown in the example URL above. The API returns URLs already stamped with your actual code, so attribution works without you doing anything.
 
-This ensures that every enrollment completed through either URL is correctly attributed to your account for reporting and commission purposes. Do not strip, modify, or re-encode the query parameters.
+`utm_campaign` is the one parameter you are expected to set yourself, as described in [Campaign tracking](#campaign-tracking). Leave the rest as returned: `utm_source`, `ref` and the fragment parameters are what tie the enrollment to your account, and re-encoding or reordering them breaks that link.
 
 <Note>
 Before presenting any enrollment URL to a customer, make sure all applicable disclosure documents are visible. Customers must have access to plan disclosures before they enroll. See [Disclosure Documents](/concepts/disclosure-documents) for requirements.
