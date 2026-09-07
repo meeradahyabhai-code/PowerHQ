@@ -63,25 +63,6 @@ The service address is attached through the customer's utility account, not thro
   Pass the `accountNumber`, not the account's `id`. `utilityAccounts` returns both, and sending the `v2-` prefixed `id` as `utilityAccountNumber` is accepted but attaches nothing — the link comes back without `prospect_id` and no error is raised. The `address` argument behaves the same way. Only `accountNumber` resolves.
 </Warning>
 
-## Campaign tracking
-
-`utm_campaign` is the only parameter you set. Everything else in the link is set by PowerHQ and must be left exactly as returned.
-
-| Parameter | Who sets it |
-|---|---|
-| `utm_campaign` | **You**, to whatever you want to report on |
-| `utm_source`, `utm_medium`, `ref`, and everything after the `#` | PowerHQ. Leave them alone |
-
-```
-https://www.powerhq.co/app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=YOUR_CAMPAIGN#/redirect?...
-```
-
-Set `utm_campaign` the same way you would on a [Drop-in Storefront](/storefront) link. Whatever it holds when the customer converts is what appears in your daily conversion file and your monthly commission report. Some partners pass a campaign name, placement or ad set directly; others pass a unique id and match it back to the source in their own systems. Either approach works.
-
-<Warning>
-  `utm_campaign` must stay in the query string, before the `#`. Anything placed after the `#` belongs to the application's own fragment and is not captured for attribution.
-</Warning>
-
 ## Supplier enrollment link
 
 Some plans include a `LinkType.ENROLLMENT` entry inside the `documents[]` array. This entry points directly to the **supplier's own website** and is not a PowerHQ-hosted flow.
@@ -94,7 +75,7 @@ The `documents[]` enrollment link is **not** guaranteed to be present on every p
 
 Your partner code replaces the `YOUR_PARTNER_CODE` placeholder shown in the example URL above. The API returns URLs already stamped with your actual code, so attribution works without you doing anything.
 
-The single exception is `utm_campaign`, which is yours to set for your own reporting — see [Campaign tracking](#campaign-tracking). Change nothing else. `utm_source`, `ref` and every parameter after the `#` are what tie the enrollment to your account, and editing, reordering or re-encoding them breaks that link.
+To pass your own attribution, set `utm_campaign` on the returned link, the same way you do on a [Drop-in Storefront](/storefront) link. Whatever it holds when the customer converts appears in your daily conversion file and your monthly commission report. Leave the rest of the link as returned.
 
 <Note>
 Before presenting any enrollment URL to a customer, make sure all applicable disclosure documents are visible. Customers must have access to plan disclosures before they enroll. See [Disclosure Documents](/concepts/disclosure-documents) for requirements.
