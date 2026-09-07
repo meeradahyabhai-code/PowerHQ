@@ -1,0 +1,94 @@
+---
+title: "residentialEnrollmentUrl: Build a Prefilled Enrollment Link"
+sidebarTitle: "residentialEnrollmentUrl"
+description: "Generate a residential enrollment link carrying the customer details you already hold — name, contact, service account and usage — so they do not re-enter them at checkout."
+---
+
+The `residentialEnrollmentUrl` query returns an enrollment link for a single residential plan, stamped with your partner code and carrying whatever customer context you supply. Use it instead of the plain `enrollmentUrl` on a plan when you already know something about the customer — their name, their service account, their usage — and you want checkout to open with those values already filled in.
+
+## Parameters
+
+<ParamField query="planId" type="String" required>
+  The `id` of the plan the customer selected, taken from a [`residentialPlans`](/queries/residential-plans) result. Plan ids regenerate when the catalog refreshes, so build the link at the moment the customer chooses a plan rather than storing it for later.
+</ParamField>
+
+<ParamField query="zipCode" type="String" required>
+  The five-digit ZIP code of the service location.
+</ParamField>
+
+<ParamField query="utilityAccountNumber" type="String">
+  The customer's ESID or utility account number, taken from an [`utilityAccounts`](/queries/utility-accounts) result. This is the argument that attaches the service address to the enrollment — see [Prefilling the service address](/concepts/enrollment#prefilling-the-service-address).
+</ParamField>
+
+<ParamField query="customer" type="EnrollmentCustomerInput">
+  The customer's contact details, as `firstName`, `lastName`, `email` and `phone`. Each field you supply prefills the matching field in the enrollment form. Send only the fields you actually hold.
+</ParamField>
+
+<ParamField query="monthlyUsage" type="Long">
+  The customer's monthly consumption in kWh, if you already know it. Checkout prices the plan at this usage rather than falling back to its own estimate. Omit the argument and the link carries no usage values at all.
+</ParamField>
+
+<ParamField query="priceType" type="String">
+  The pricing mode applied at checkout. Defaults to `"SEASONALIZED"`, the all-in rate accounting for how usage changes across the year, which is the same basis your plan cards use. Pass `"FLAT"` only when you deliberately want every month priced at the exact `monthlyUsage` you supplied, with no seasonal adjustment. See [Pricing](/concepts/pricing).
+</ParamField>
+
+<ParamField query="startDate" type="Date">
+  The requested service start date, in `YYYY-MM-DD` format.
+</ParamField>
+
+<ParamField query="address" type="EnrollmentAddressInput">
+  The service address, as `street`, `street2`, `city` and `state`. Accepted, but it does not attach the service address on its own — pass `utilityAccountNumber` for that.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  residentialEnrollmentUrl(
+    planId: "e895bd03-eec0-4f5b-862a-b799109d93fa"
+    zipCode: "77002"
+    monthlyUsage: 1500
+    utilityAccountNumber: "1008901000158230011100"
+    customer: {
+      firstName: "Jordan"
+      lastName: "Lee"
+      email: "jordan@example.com"
+      phone: "7135550142"
+    }
+  ) {
+    enrollmentUrl
+    headlessEnrollmentUrl
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "residentialEnrollmentUrl": {
+      "enrollmentUrl": "https://www.powerhq.co/app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=RESIDENTIAL_PARTNER&plan_id=e895bd03-eec0-4f5b-862a-b799109d93fa&zip_code=77002&state=TX&ref=YOUR_PARTNER_CODE&prospect_id=v2-190CEF10D75DE22D91098CED077D4250&fname=Jordan&lname=Lee&email=jordan%40example.com&phone=7135550142&annual_usage=18000.0&usage_source=EXTERNAL",
+      "headlessEnrollmentUrl": "https://www.powerhq.co/partner-app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=RESIDENTIAL_PARTNER&plan_id=e895bd03-eec0-4f5b-862a-b799109d93fa&zip_code=77002&state=TX&ref=YOUR_PARTNER_CODE&prospect_id=v2-190CEF10D75DE22D91098CED077D4250&fname=Jordan&lname=Lee&email=jordan%40example.com&phone=7135550142&annual_usage=18000.0&usage_source=EXTERNAL"
+    }
+  }
+}
+```
+
+The context you supplied appears in the returned link as `prospect_id` and `state` (resolved from `utilityAccountNumber`), `fname`, `lname`, `email` and `phone` (from `customer`), and `annual_usage` with `usage_source=EXTERNAL` (from `monthlyUsage`, multiplied by twelve).
+
+## Response fields
+
+<ResponseField name="enrollmentUrl" type="String">
+  A link to the full-page, PowerHQ-hosted enrollment flow, with its own header and footer. Use this when you are redirecting the customer away from your site.
+</ResponseField>
+
+<ResponseField name="headlessEnrollmentUrl" type="String">
+  A link to the same flow without PowerHQ chrome, suitable for embedding in your own page or a webview. It carries identical parameters to `enrollmentUrl`.
+</ResponseField>
+
+<Warning>
+  These links carry personal data in the query string. Build them server-side at the moment the customer acts, hand the URL straight to the browser, and do not log or cache it.
+</Warning>
+
+<Note>
+  Before presenting any enrollment URL, make sure the plan's disclosure documents are visible to the customer. See [Disclosure Documents](/concepts/disclosure-documents).
+</Note>

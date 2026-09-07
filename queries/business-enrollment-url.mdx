@@ -1,0 +1,98 @@
+---
+title: "businessEnrollmentUrl: Build a Prefilled Commercial Enrollment Link"
+sidebarTitle: "businessEnrollmentUrl"
+description: "Generate a business enrollment link carrying the details you already hold — business name, signer, contact and annual usage — so they do not re-enter them at checkout."
+---
+
+The `businessEnrollmentUrl` query returns an enrollment link for a single commercial plan, stamped with your partner code and carrying whatever context you supply. It works the same way as [`residentialEnrollmentUrl`](/queries/residential-enrollment-url), with the additional fields a commercial enrollment requires.
+
+## Parameters
+
+<ParamField query="planId" type="String" required>
+  The `id` of the plan the customer selected, taken from a [`businessPlans`](/queries/business-plans) result. Plan ids regenerate when the catalog refreshes, so build the link at the moment the customer chooses a plan.
+</ParamField>
+
+<ParamField query="zipCode" type="String" required>
+  The five-digit ZIP code of the service location.
+</ParamField>
+
+<ParamField query="isMoveIn" type="Boolean" required>
+  Set to `true` when the business is establishing service at a new location, and `false` when it is switching providers at an address that already has active service. This argument is required here and has no residential equivalent, because a commercial enrollment must declare which case it is.
+</ParamField>
+
+<ParamField query="annualUsageInkWh" type="Float">
+  The customer's annual consumption in kWh. Checkout prices the plan at this usage rather than falling back to its own estimate.
+</ParamField>
+
+<ParamField query="businessName" type="String">
+  The legal name of the business enrolling.
+</ParamField>
+
+<ParamField query="position" type="String">
+  The signer's role at the business, for example `"Owner"`.
+</ParamField>
+
+<ParamField query="customer" type="EnrollmentCustomerInput">
+  The signer's contact details, as `firstName`, `lastName`, `email` and `phone`. Each field you supply prefills the matching field in the enrollment form.
+</ParamField>
+
+<ParamField query="utilityAccountNumber" type="String">
+  The business's ESID or utility account number, taken from an [`utilityAccounts`](/queries/utility-accounts) result. See [Prefilling the service address](/concepts/enrollment#prefilling-the-service-address).
+</ParamField>
+
+<ParamField query="startDate" type="Date">
+  The requested service start date, in `YYYY-MM-DD` format. Call [`nextStartDate`](/queries/next-start-date) first to find the earliest valid date.
+</ParamField>
+
+<ParamField query="address" type="EnrollmentAddressInput">
+  The service address, as `street`, `street2`, `city` and `state`. Accepted, but it does not attach the service address on its own — pass `utilityAccountNumber` for that.
+</ParamField>
+
+## Example
+
+```graphql
+{
+  businessEnrollmentUrl(
+    planId: "9b740dd9-9a5d-48fe-976a-0cb5ed4cdebb"
+    zipCode: "77002"
+    isMoveIn: false
+    annualUsageInkWh: 50000
+    businessName: "Acme Coffee"
+    position: "Owner"
+    customer: {
+      firstName: "Jordan"
+      lastName: "Lee"
+      email: "jordan@example.com"
+      phone: "7135550142"
+    }
+  ) {
+    enrollmentUrl
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "businessEnrollmentUrl": {
+      "enrollmentUrl": "https://www.powerhq.co/app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=partners#/redirect?ftype=BUSINESS_PARTNER&plan_id=9b740dd9-9a5d-48fe-976a-0cb5ed4cdebb&zip_code=77002&ref=YOUR_PARTNER_CODE&fname=Jordan&lname=Lee&email=jordan%40example.com&phone=7135550142&is_move_in=false&bname=Acme+Coffee&position=Owner&annual_usage=50000.0"
+    }
+  }
+}
+```
+
+The commercial fields appear in the link as `bname`, `position` and `is_move_in`, alongside the same customer and usage values a residential link carries.
+
+## Response fields
+
+<ResponseField name="enrollmentUrl" type="String">
+  A link to the full-page, PowerHQ-hosted enrollment flow, with its own header and footer.
+</ResponseField>
+
+<ResponseField name="headlessEnrollmentUrl" type="String">
+  A link to the same flow without PowerHQ chrome, suitable for embedding in your own page or a webview. It carries identical parameters to `enrollmentUrl`.
+</ResponseField>
+
+<Warning>
+  These links carry personal data in the query string. Build them server-side at the moment the customer acts, hand the URL straight to the browser, and do not log or cache it.
+</Warning>
