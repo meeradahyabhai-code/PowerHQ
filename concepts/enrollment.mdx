@@ -65,16 +65,21 @@ The service address is attached through the customer's utility account, not thro
 
 ## Campaign tracking
 
-The `utm_` parameters sit in the ordinary query string, before the `#`:
+`utm_campaign` is the only parameter you set. Everything else in the link is set by PowerHQ and must be left exactly as returned.
+
+| Parameter | Who sets it |
+|---|---|
+| `utm_campaign` | **You**, to whatever you want to report on |
+| `utm_source`, `utm_medium`, `ref`, and everything after the `#` | PowerHQ. Leave them alone |
 
 ```
 https://www.powerhq.co/app.html?utm_source=YOUR_PARTNER_CODE&utm_medium=referral&utm_campaign=YOUR_CAMPAIGN#/redirect?...
 ```
 
-Set `utm_campaign` to whatever you want to report on, the same way you would on a [Drop-in Storefront](/storefront) link. Whatever it holds when the customer converts is what appears in your daily conversion file and your monthly commission report. Some partners pass a campaign name, placement or ad set directly; others pass a unique id and match it back to the source in their own systems. Either approach works.
+Set `utm_campaign` the same way you would on a [Drop-in Storefront](/storefront) link. Whatever it holds when the customer converts is what appears in your daily conversion file and your monthly commission report. Some partners pass a campaign name, placement or ad set directly; others pass a unique id and match it back to the source in their own systems. Either approach works.
 
 <Warning>
-  Keep your `utm_` parameters before the `#`. Anything placed after it belongs to the application's own fragment and is not captured for attribution.
+  `utm_campaign` must stay in the query string, before the `#`. Anything placed after the `#` belongs to the application's own fragment and is not captured for attribution.
 </Warning>
 
 ## Supplier enrollment link
@@ -89,7 +94,7 @@ The `documents[]` enrollment link is **not** guaranteed to be present on every p
 
 Your partner code replaces the `YOUR_PARTNER_CODE` placeholder shown in the example URL above. The API returns URLs already stamped with your actual code, so attribution works without you doing anything.
 
-`utm_campaign` is the one parameter you are expected to set yourself, as described in [Campaign tracking](#campaign-tracking). Leave the rest as returned: `utm_source`, `ref` and the fragment parameters are what tie the enrollment to your account, and re-encoding or reordering them breaks that link.
+The single exception is `utm_campaign`, which is yours to set for your own reporting — see [Campaign tracking](#campaign-tracking). Change nothing else. `utm_source`, `ref` and every parameter after the `#` are what tie the enrollment to your account, and editing, reordering or re-encoding them breaks that link.
 
 <Note>
 Before presenting any enrollment URL to a customer, make sure all applicable disclosure documents are visible. Customers must have access to plan disclosures before they enroll. See [Disclosure Documents](/concepts/disclosure-documents) for requirements.
