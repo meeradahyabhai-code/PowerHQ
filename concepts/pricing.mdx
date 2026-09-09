@@ -12,7 +12,7 @@ In Texas, both rate fields include TDU (Transmission and Distribution Utility) d
 
 | Field | What it represents |
 |---|---|
-| `advertisedPriceUsdPerKwh` | The price per kWh at exactly 500, 1,000 or 2,000 kWh. This is the static EFL price at that benchmark, calculated by the supplier and passed through unchanged, and it does not reflect how a customer's usage varies month to month. |
+| `advertisedPriceUsdPerKwh` | The price per kWh at exactly 500, 1,000 or 2,000 kWh. This is the static EFL price at that benchmark, calculated by the supplier and passed through unchanged, and it does not reflect how a customer's usage varies month to month. `allInRateUsdPerKwh` is more accurate, because it shows what the customer actually pays. |
 | `allInRateUsdPerKwh` | The actual per-kWh cost against the customer's real usage pattern, **seasonalized by default**. This is the most accurate reflection of what a customer will pay. |
 
 `allInRateUsdPerKwh` folds in TDU delivery, bill credits, and any fixed fees, and is seasonalized across the year, so the customer's total bill is fully represented by this field in Texas. It is the more accurate of the two, because it reflects what the customer actually pays rather than the price at a single benchmark.
@@ -23,7 +23,7 @@ In deregulated markets outside Texas, the utility bills delivery charges separat
 
 | Field | What it represents |
 |---|---|
-| `advertisedPriceUsdPerKwh` | The static EFL price at that benchmark, calculated by the supplier. Outside Texas it is the variable supply rate per kWh and excludes any fixed monthly fee. |
+| `advertisedPriceUsdPerKwh` | The static EFL price at that benchmark, calculated by the supplier. Outside Texas it is the variable supply rate per kWh and excludes any fixed monthly fee. `allInRateUsdPerKwh` is more accurate, because it amortizes that fee. |
 | `allInRateUsdPerKwh` | The supply rate plus the plan's fixed monthly fee amortized per kWh — still excludes TDU delivery. |
 
 <Warning>

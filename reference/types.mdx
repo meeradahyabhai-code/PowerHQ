@@ -228,7 +228,7 @@ type PlanRate {
 </ResponseField>
 
 <ResponseField name="advertisedPriceUsdPerKwh" type="Float!" required>
-  The static EFL price at this usage benchmark, in $/kWh. Calculated by the supplier and passed through unchanged, so it does not reflect how a customer's usage varies month to month.
+  The static EFL price at this usage benchmark, in $/kWh. Calculated by the supplier and passed through unchanged, so it does not reflect how a customer's usage varies month to month. Use [`allInRateUsdPerKwh`](#planrate) for what the customer actually pays.
 </ResponseField>
 
 <ResponseField name="allInRateUsdPerKwh" type="Float!" required>
