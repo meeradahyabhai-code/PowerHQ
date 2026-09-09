@@ -228,11 +228,11 @@ type PlanRate {
 </ResponseField>
 
 <ResponseField name="advertisedPriceUsdPerKwh" type="Float!" required>
-  The headline rate advertised by the supplier at this usage level, in $/kWh.
+  The headline rate advertised by the supplier at this usage level, in $/kWh. Received from the supplier and passed through unchanged.
 </ResponseField>
 
 <ResponseField name="allInRateUsdPerKwh" type="Float!" required>
-  The fully loaded rate including all fees and credits at this usage level, in $/kWh. Use this for accurate cost comparisons.
+  The fully loaded rate including all fees and credits, in $/kWh, seasonalized across the year. Use this for accurate cost comparisons.
 </ResponseField>
 
 <ResponseField name="avgMonthlyBillUsd" type="Float!" required>
