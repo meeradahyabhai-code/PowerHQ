@@ -197,11 +197,11 @@ The `residentialPlans` query returns a list of available retail electricity plan
     </ResponseField>
 
     <ResponseField name="advertisedPriceUsdPerKwh" type="Float">
-      The static EFL price at this usage benchmark, in $/kWh, as shown on the plan's Electricity Facts Label. Calculated by the supplier and passed through unchanged, so it does not reflect how a customer's usage varies month to month. Use `allInRateUsdPerKwh` for what the customer actually pays.
+      The static EFL price at this usage benchmark, in $/kWh, as shown on the plan's Electricity Facts Label. Set by the supplier.
     </ResponseField>
 
     <ResponseField name="allInRateUsdPerKwh" type="Float">
-      All-in effective rate in $/kWh, including all fees and credits, seasonalized across the year. More accurate than `advertisedPriceUsdPerKwh` for what a customer actually pays. See [Pricing Concepts](/concepts/pricing) for a full breakdown of what's included.
+      The all-in rate in $/kWh, including all fees and credits, seasonalized across the year. See [Pricing Concepts](/concepts/pricing) for what is included.
     </ResponseField>
 
     <ResponseField name="avgMonthlyBillUsd" type="Float">
