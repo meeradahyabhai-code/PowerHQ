@@ -12,10 +12,10 @@ In Texas, both rate fields include TDU (Transmission and Distribution Utility) d
 
 | Field | What it represents |
 |---|---|
-| `advertisedPriceUsdPerKwh` | The effective rate calculated at a static, standard monthly usage — exactly 500, 1,000, or 2,000 kWh flat each month. |
-| `allInRateUsdPerKwh` | The actual per-kWh cost against the customer's real usage pattern, **seasonalized by default**. This is the most accurate reflection of what a customer will pay. |
+| `advertisedPriceUsdPerKwh` | The supplier's published EFL price at exactly 500, 1,000 or 2,000 kWh a month, with no seasonal adjustment. |
+| `allInRateUsdPerKwh` | The effective per-kWh cost against the customer's real usage pattern, **seasonalized by default**, and the closest estimate of what they will pay. |
 
-`allInRateUsdPerKwh` folds in TDU delivery, bill credits, and any fixed fees, so the customer's total bill is fully represented by this field in Texas. `advertisedPriceUsdPerKwh` is calculated at a flat, static usage level and does not apply seasonal adjustment.
+`allInRateUsdPerKwh` folds in TDU delivery, bill credits, and any fixed fees, so the customer's total bill is fully represented by this field in Texas.
 
 ## All other markets (PA, OH, IL, NJ, and more)
 
@@ -23,7 +23,7 @@ In deregulated markets outside Texas, the utility bills delivery charges separat
 
 | Field | What it represents |
 |---|---|
-| `advertisedPriceUsdPerKwh` | The variable supply rate per kWh only — excludes any fixed monthly fee. |
+| `advertisedPriceUsdPerKwh` | The supplier's published EFL price at that benchmark, which outside Texas covers the variable supply rate only and excludes any fixed monthly fee. |
 | `allInRateUsdPerKwh` | The supply rate plus the plan's fixed monthly fee amortized per kWh — still excludes TDU delivery. |
 
 <Warning>
@@ -40,7 +40,7 @@ Use `allInRateUsdPerKwh` (and the seasonalized top-level `price` field) whenever
 
 - **Effective supply cost** → `allInRateUsdPerKwh` or the top-level `price`
 - **Estimated monthly bill at a specific usage tier** → `avgMonthlyBillUsd`
-- **Raw supply rate, no fee amortization** → `advertisedPriceUsdPerKwh`
+- **The static EFL price at a benchmark, as the supplier publishes it** → `advertisedPriceUsdPerKwh`
 
 <Note>
 `advertisedPriceUsdPerKwh` and `allInRateUsdPerKwh` are equal only on plans that have no fixed monthly fees and no bill credits. On any plan with those adjustments the two values will differ.
@@ -49,6 +49,24 @@ Use `allInRateUsdPerKwh` (and the seasonalized top-level `price` field) whenever
 ## Fee breakdown
 
 The `feeBreakdown` field on `ResidentialPlan` gives you component-level detail on every fee included in the plan's pricing. Each entry describes the fee type (`FeeType`), when it applies (`FeeApplicability`), and the amount. Use this when you want to surface an itemized breakdown — for example, showing a customer that a plan has a $9.95 monthly base charge before they enroll.
+
+Every residential plan opens its breakdown with an `ENERGY_CHARGE` entry. That is the supplier's raw energy charge in dollars per kWh, before any utility delivery charge is added, and it always carries `applicability: PER_KWH`:
+
+```json
+"feeBreakdown": [
+  { "feeType": "ENERGY_CHARGE",     "amountUsd": 0.1269,   "applicability": "PER_KWH", "threshold": null },
+  { "feeType": "UTILITY_PASS_THRU", "amountUsd": 4.9,      "applicability": "MONTHLY", "threshold": null },
+  { "feeType": "UTILITY_PASS_THRU", "amountUsd": 0.06413,  "applicability": "PER_KWH", "threshold": null },
+  { "feeType": "BASE_CHARGE",       "amountUsd": 0.0,      "applicability": "MONTHLY", "threshold": null },
+  { "feeType": "BILL_CREDIT",       "amountUsd": 200.0,    "applicability": "CREDIT_MONTHLY_ABOVE_USAGE", "threshold": 2000.0 }
+]
+```
+
+Read `ENERGY_CHARGE` when you want to show the supply rate on its own, separately from delivery. Use `advertisedPriceUsdPerKwh` for the supplier's published EFL price, and `allInRateUsdPerKwh` for what the customer actually pays across the year.
+
+<Warning>
+  Do not add the fee entries together to reconstruct either rate. `advertisedPriceUsdPerKwh` is calculated by the supplier, not derived from this breakdown, and `allInRateUsdPerKwh` is seasonalized across the year rather than computed at a single usage point. The `rates` array already carries both at 500, 1,000 and 2,000 kWh.
+</Warning>
 
 See the [Types reference](/reference/types) for the full `PlanFee` type definition and the complete `FeeType` and `FeeApplicability` enumerations.
 
