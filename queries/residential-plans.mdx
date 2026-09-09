@@ -237,7 +237,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ResponseField>
 
 <ResponseField name="feeBreakdown" type="PlanFee[]">
-  List of individual fees that make up the plan's cost structure (e.g., TDU delivery charges, bill credits, minimum usage fees).
+  List of individual fees that make up the plan's cost structure. Every residential plan includes an `ENERGY_CHARGE` entry, the supplier's raw energy charge in $/kWh, alongside the TDU delivery charges, bill credits and usage fees that apply to that plan. See [Fee breakdown](/concepts/pricing#fee-breakdown).
 
   <Note>
     `feeBreakdown` may be an empty array if no itemized fees are available. Individual fee entries may include a `rules` array that is also empty.

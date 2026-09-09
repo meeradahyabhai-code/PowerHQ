@@ -108,7 +108,7 @@ Used on `PlanFee.feeType`. Identifies the nature of a specific fee or credit lin
 
 | Value | Description |
 |-------|-------------|
-| `ENERGY_CHARGE` | The core per-kWh energy supply charge from the supplier. |
+| `ENERGY_CHARGE` | The supplier's raw energy charge in $/kWh, before utility delivery charges are added. Always carries `applicability: PER_KWH`. |
 | `UTILITY_PASS_THRU` | Utility delivery, transmission, or distribution charges passed through directly to the customer. |
 | `MSDF_UTILITY_PASS_THRU` | Meter Systems Development Fee — a specific utility pass-through charge for metering infrastructure. |
 | `BASE_CHARGE` | A fixed monthly base or customer charge applied regardless of usage. |
