@@ -197,11 +197,11 @@ The `residentialPlans` query returns a list of available retail electricity plan
     </ResponseField>
 
     <ResponseField name="advertisedPriceUsdPerKwh" type="Float">
-      Advertised energy rate in $/kWh at this usage level, as shown on the plan's Electricity Facts Label (EFL).
+      Advertised energy rate in $/kWh at this usage level, as shown on the plan's Electricity Facts Label (EFL). Received from the supplier and passed through unchanged.
     </ResponseField>
 
     <ResponseField name="allInRateUsdPerKwh" type="Float">
-      All-in effective rate in $/kWh at this usage level, including all fees and credits. See [Pricing Concepts](/concepts/pricing) for a full breakdown of what's included.
+      All-in effective rate in $/kWh, including all fees and credits, seasonalized across the year. See [Pricing Concepts](/concepts/pricing) for a full breakdown of what's included.
     </ResponseField>
 
     <ResponseField name="avgMonthlyBillUsd" type="Float">
