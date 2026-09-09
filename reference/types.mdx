@@ -228,11 +228,11 @@ type PlanRate {
 </ResponseField>
 
 <ResponseField name="advertisedPriceUsdPerKwh" type="Float!" required>
-  The static EFL price at this usage benchmark, in $/kWh. Set by the supplier.
+  The supplier's published EFL price in $/kWh at this fixed usage benchmark, not adjusted for how a customer's usage varies across the year.
 </ResponseField>
 
 <ResponseField name="allInRateUsdPerKwh" type="Float!" required>
-  The all-in rate in $/kWh, including all fees and credits, seasonalized across the year.
+  The effective price in $/kWh at this usage benchmark, including all fees and credits and seasonalized across the year.
 </ResponseField>
 
 <ResponseField name="avgMonthlyBillUsd" type="Float!" required>
