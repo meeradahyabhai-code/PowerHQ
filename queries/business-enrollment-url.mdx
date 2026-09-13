@@ -9,7 +9,7 @@ The `businessEnrollmentUrl` query returns an enrollment link for a single commer
 ## Parameters
 
 <ParamField query="planId" type="String" required>
-  The `id` of the plan the customer selected, taken from a [`businessPlans`](/queries/business-plans) result. Plan ids regenerate when the catalog refreshes, so build the link at the moment the customer chooses a plan. The query does not check the id: an expired or unknown `planId` still returns a link, with no error.
+  The `id` of the plan the customer selected, taken from a [`businessPlans`](/queries/business-plans) result. Plan ids regenerate when the catalog refreshes, so build the link at the moment the customer chooses a plan.
 </ParamField>
 
 <ParamField query="zipCode" type="String" required>

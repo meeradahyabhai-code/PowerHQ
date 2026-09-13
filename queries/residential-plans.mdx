@@ -15,7 +15,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
 <ParamField query="utilityId" type="ID">
   Utility or TDU (Transmission and Distribution Utility) ID. When provided alongside `zipCode`, `utilityId` takes precedence and `zipCode` is ignored.
 
-  Every ZIP code a utility serves returns the same plans, so one request per utility covers its whole territory. Always pass `utilityId` when a ZIP code is served by more than one utility. See [Caching and call volume](#caching-and-call-volume).
+  Query once per utility, and handle the ZIP code to utility mapping within your system.
 </ParamField>
 
 <ParamField query="monthlyUsage" type="Long">
@@ -81,21 +81,6 @@ The `residentialPlans` query returns a list of available retail electricity plan
   }
 }
 ```
-
-## Caching and call volume
-
-Plans belong to a utility, not a ZIP code. Every ZIP code a utility serves returns the same plans, so one request per utility covers its whole territory.
-
-- **Request plans by `utilityId`.** Resolve each ZIP code with [`utilities`](/queries/utilities) the first time you see it, store the result, then request plans by `utilityId`. Requesting plans ZIP code by ZIP code downloads the same data many times over.
-- **Pass `utilityId` when a ZIP code has more than one utility.** A `zipCode` query returns plans for only one of them, without an error. See [ZIP codes served by more than one utility](/queries/utilities#zip-codes-served-by-more-than-one-utility).
-- **Cache one result per utility and `priceType`.** `monthlyUsage` does not change which plans are returned or any `rates[]` row. It changes only the top-level `price`: for every plan in Texas, and for some plans in other markets.
-- **Deduplicate on `utilityCode`.** Some utility ids share one catalog. `AMEREN-CILCO`, `AMEREN-CIPS` and `AMEREN-IP` return the same plans, each with `utilityCode: "AMEREN"`.
-
-Every request counts toward your key's [rate limits](/reference/errors#rate-limits).
-
-<Warning>
-  Plan ids change every time the catalog refreshes, which happens more than once a day. A cached plan list is fine for displaying plans. When the customer chooses one, request their utility again, match the plan on `supplier.id`, `term` and `title` with trailing spaces trimmed, and use the fresh `enrollmentUrl` or `id`. If two plans still match, compare their `feeBreakdown`.
-</Warning>
 
 ## Response fields
 

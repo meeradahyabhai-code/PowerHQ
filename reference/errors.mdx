@@ -16,7 +16,7 @@ HTTP errors occur at the transport layer and mean the API never processed your G
 |--------|-------|------------|
 | `403 Forbidden` | Missing or invalid `x-api-key` request header | Verify the header is present, the key has no stray whitespace, and it is the right key for the environment you are calling. |
 | `400 Bad Request` | Malformed HTTP request body — the server could not parse the request as valid JSON or could not locate a `query` field | Ensure your request body is valid JSON and includes a `query` key containing your GraphQL operation string. |
-| `429 Too Many Requests` | You exceeded your API key's request rate limit or monthly quota | Back off and retry with increasing delays. See [Rate limits](#rate-limits). |
+| `429 Too Many Requests` | Your API key exceeded its limit of 100,000 requests per month | See [Rate limits](#rate-limits). |
 
 <Warning>
   A `403 Forbidden` means the `x-api-key` header is missing, malformed, or not valid for that environment. Staging and production keys are different, so a key that works against certification will 403 against production.
@@ -26,13 +26,7 @@ HTTP errors occur at the transport layer and mean the API never processed your G
 
 ## Rate limits
 
-Each API key has a monthly request quota and a request rate limit. Every request counts once toward the quota, however many plans it returns.
-
-When you exceed either limit, the API returns `429 Too Many Requests` and does not run the query.
-
-- **Back off and retry.** Wait before retrying, and increase the wait after each `429`.
-- **If `429` responses continue,** you have likely used your monthly quota. Contact your partner manager to raise it.
-- **Cache plans instead of requesting them again.** Plans belong to a utility, not a ZIP code, so one request per utility covers its whole territory. See [Caching and call volume](/queries/residential-plans#caching-and-call-volume).
+Each API key can make 100,000 requests per month. Requests over the limit return `429 Too Many Requests`.
 
 ---
 

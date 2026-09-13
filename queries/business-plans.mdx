@@ -10,6 +10,8 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
 
 <ParamField query="zipCode" type="String" required>
   ZIP code for the business service location. This is the only required parameter — the query will not execute without it.
+
+  Query once per utility, and handle the ZIP code to utility mapping within your system.
 </ParamField>
 
 <ParamField query="annualUsageInkWh" type="Float">
@@ -61,14 +63,6 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
   }
 }
 ```
-
-## Caching and call volume
-
-Every ZIP code a utility serves returns the same business plans. Resolve ZIP codes to utilities with [`utilities`](/queries/utilities), and query one ZIP code per utility rather than every ZIP code.
-
-The plans returned, and their prices, change with `annualUsageInkWh` and `isMoveIn`. A higher usage does not simply mean more or fewer plans, so cache each result against the utility, the annual usage and the `isMoveIn` value you requested, and do not reuse it for a different usage.
-
-Plan ids change when the catalog refreshes. Request plans again when the customer chooses one, and build the enrollment link from the fresh result. Every request counts toward your key's [rate limits](/reference/errors#rate-limits).
 
 ## Response fields
 
