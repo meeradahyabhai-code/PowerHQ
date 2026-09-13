@@ -33,6 +33,14 @@ The `utilities` query returns the electric utility or Transmission and Distribut
 }
 ```
 
+## ZIP codes served by more than one utility
+
+Some ZIP codes sit on a territory boundary, and `utilities` returns every utility that serves them. ZIP `77573`, for example, returns both `TNMP` and `CNP`.
+
+<Warning>
+  A `residentialPlans` query by `zipCode` returns plans for only one of those utilities, with no error. When `utilities` returns more than one entry, ask the customer which utility bills them, then query `residentialPlans` with that `utilityId`.
+</Warning>
+
 ## Nesting residential plans
 
 You can request residential plans directly inside the `utilities` response by adding a `residentialPlans` selection to your query. This lets you retrieve the utility and its available plans in a single round trip.

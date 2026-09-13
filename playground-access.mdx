@@ -7,10 +7,7 @@ The [playground](/playground) is backed by a public endpoint that needs no API k
 browser. Anything you can run in the playground, you can run from a script or an AI coding assistant.
 
 <Info>
-  **10 free calls per IP.** Loading the playground and browsing the schema are free — only real
-  queries count against it. It is a one-time allowance, not a daily one, so it is meant for
-  evaluating the data rather than running a workload. [Request an API key](mailto:support@powerhq.co)
-  to call production directly with no cap.
+  **10 free calls per IP.** Loading the playground and browsing the schema are free — only real queries count against it. It is a one-time allowance, not a daily one, so it is meant for evaluating the data rather than running a workload. [Request an API key](mailto:support@powerhq.co) to call production directly, within your key's own [rate limits](/concepts/call-volume#rate-limits).
 </Info>
 
 ## What you can run
@@ -57,7 +54,7 @@ GraphQL query and post it to the same endpoint.
 
 ## Moving to your own key
 
-With an issued key you skip the playground and call production directly, with no per-day cap:
+With an issued key you skip the playground and call production directly, within your key's [rate limits](/concepts/call-volume#rate-limits):
 
 ```bash
 curl -s -X POST https://eapi.prod.powerhq.co/graphql \

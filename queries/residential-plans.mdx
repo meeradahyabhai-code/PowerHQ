@@ -14,6 +14,8 @@ The `residentialPlans` query returns a list of available retail electricity plan
 
 <ParamField query="utilityId" type="ID">
   Utility or TDU (Transmission and Distribution Utility) ID. When provided alongside `zipCode`, `utilityId` takes precedence and `zipCode` is ignored.
+
+  Plans are the same for every ZIP code a utility serves, so one call per utility covers its whole territory. Prefer `utilityId` over `zipCode` when you cache results, and always use it when a ZIP code is served by more than one utility. See [Call volume and caching](/concepts/call-volume).
 </ParamField>
 
 <ParamField query="monthlyUsage" type="Long">
