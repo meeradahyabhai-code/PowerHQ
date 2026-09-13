@@ -10,6 +10,8 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
 
 <ParamField query="zipCode" type="String" required>
   ZIP code for the business service location. This is the only required parameter — the query will not execute without it.
+
+  Query once per utility, and handle the ZIP code to utility mapping within your system.
 </ParamField>
 
 <ParamField query="annualUsageInkWh" type="Float">
