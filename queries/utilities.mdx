@@ -43,7 +43,7 @@ Some ZIP codes sit on a territory boundary, and `utilities` returns every utilit
 
 ## Nesting residential plans
 
-You can request residential plans directly inside the `utilities` response by adding a `residentialPlans` selection to your query. This lets you retrieve the utility and its available plans in a single round trip.
+You can request residential plans directly inside the `utilities` response by adding a `residentialPlans` selection to your query. This lets you retrieve the utility and its available plans in a single round trip. When a ZIP code is served by more than one utility, each utility comes back with its own plans.
 
 ```graphql
 {

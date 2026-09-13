@@ -9,7 +9,7 @@ The `residentialEnrollmentUrl` query returns an enrollment link for a single res
 ## Parameters
 
 <ParamField query="planId" type="String" required>
-  The `id` of the plan the customer selected, taken from a [`residentialPlans`](/queries/residential-plans) result. Plan ids regenerate when the catalog refreshes, so build the link at the moment the customer chooses a plan rather than storing it for later.
+  The `id` of the plan the customer selected, taken from a [`residentialPlans`](/queries/residential-plans) result. Plan ids regenerate when the catalog refreshes, so build the link at the moment the customer chooses a plan rather than storing it for later. The query does not check the id: an expired or unknown `planId` still returns a link, with no error.
 </ParamField>
 
 <ParamField query="zipCode" type="String" required>
