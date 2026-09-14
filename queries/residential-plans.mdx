@@ -4,7 +4,7 @@ sidebarTitle: "residentialPlans"
 description: "Query retail electricity plans for a U.S. residential address by ZIP code or utility ID, with usage-based pricing, supplier scores, and enrollment URLs."
 ---
 
-The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, supplier reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code.
+The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, supplier reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
 
 ## Parameters
 
@@ -14,8 +14,6 @@ The `residentialPlans` query returns a list of available retail electricity plan
 
 <ParamField query="utilityId" type="ID">
   Utility or TDU (Transmission and Distribution Utility) ID. When provided alongside `zipCode`, `utilityId` takes precedence and `zipCode` is ignored.
-
-  Query once per utility, and handle the ZIP code to utility mapping within your system.
 </ParamField>
 
 <ParamField query="monthlyUsage" type="Long">

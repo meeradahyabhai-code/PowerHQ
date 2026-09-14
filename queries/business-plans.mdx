@@ -4,14 +4,12 @@ sidebarTitle: "businessPlans"
 description: "Query commercial electricity plans for a U.S. business location by ZIP code, with usage-based pricing, monthly fees, and partner-stamped enrollment URLs."
 ---
 
-The `businessPlans` query returns available retail electricity plans for a U.S. commercial service location identified by ZIP code. Provide your customer's annual usage to receive accurate usage-based pricing, indicate whether the request is for new service or a switch, and optionally pass a desired start date. Each plan in the response includes the supplier, contract term, per-kWh price, monthly fee, renewable percentage, and ready-to-use enrollment URLs stamped with your partner code.
+The `businessPlans` query returns available retail electricity plans for a U.S. commercial service location identified by ZIP code. Provide your customer's annual usage to receive accurate usage-based pricing, indicate whether the request is for new service or a switch, and optionally pass a desired start date. Each plan in the response includes the supplier, contract term, per-kWh price, monthly fee, renewable percentage, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
 
 ## Parameters
 
 <ParamField query="zipCode" type="String" required>
   ZIP code for the business service location. This is the only required parameter — the query will not execute without it.
-
-  Query once per utility, and handle the ZIP code to utility mapping within your system.
 </ParamField>
 
 <ParamField query="annualUsageInkWh" type="Float">
