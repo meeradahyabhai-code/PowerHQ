@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "luma",
-  "name": "PowerHQ Plan Data API",
+  "name": "PowerHQ API",
   "colors": {
     "primary": "#1A3A5C",
     "light": "#EAF1F8",
