@@ -1,10 +1,10 @@
 ---
-title: "PowerHQ Plan Data API: GraphQL Object Type Reference"
+title: "PowerHQ API: GraphQL Object Type Reference"
 sidebarTitle: "Types"
-description: "Complete reference for every GraphQL object type, field, and scalar in the PowerHQ Plan Data API, including nullability rules and field-level notes."
+description: "Complete reference for every GraphQL object type, field, and scalar in the PowerHQ API, including nullability rules and field-level notes."
 ---
 
-The PowerHQ Plan Data API uses a fully typed GraphQL schema. Every field in a response maps to a concrete type defined in that schema — object types, scalars, or enums. This page documents each object type, its fields, and whether each field is nullable (no `!`) or non-null (marked `!`). Use this reference alongside the [Enums reference](/reference/enums) for the complete picture.
+The PowerHQ API uses a fully typed GraphQL schema. Every field in a response maps to a concrete type defined in that schema — object types, scalars, or enums. This page documents each object type, its fields, and whether each field is nullable (no `!`) or non-null (marked `!`). Use this reference alongside the [Enums reference](/reference/enums) for the complete picture.
 
 ---
 
@@ -50,7 +50,7 @@ type ResidentialPlan {
 </ResponseField>
 
 <ResponseField name="title" type="String!" required>
-  Human-readable plan name as provided by the supplier.
+  Human-readable plan name as set by the provider.
 </ResponseField>
 
 <ResponseField name="description" type="String!" required>
@@ -74,7 +74,7 @@ type ResidentialPlan {
 </ResponseField>
 
 <ResponseField name="supplier" type="Supplier!" required>
-  The energy supplier offering this plan. See [`Supplier`](#supplier).
+  The energy provider offering this plan. See [`Supplier`](#supplier).
 </ResponseField>
 
 <ResponseField name="rates" type="[PlanRate!]!" required>
@@ -95,7 +95,7 @@ type ResidentialPlan {
 </ResponseField>
 
 <ResponseField name="supplierScores" type="SupplierScores">
-  Aggregated ratings for the supplier. Nullable — absent when the supplier has no ratings on file. See [`SupplierScores`](#supplierscores).
+  Aggregated ratings for the provider. Nullable — absent when the provider has no ratings on file. See [`SupplierScores`](#supplierscores).
 </ResponseField>
 
 <ResponseField name="earlyTerminationFeeUsd" type="Float">
@@ -127,7 +127,7 @@ type ResidentialPlan {
 </ResponseField>
 
 <ResponseField name="isPetFriendly" type="Boolean!" required>
-  `true` if the supplier has a pet-friendly policy or donates to animal welfare causes.
+  `true` if the provider has a pet-friendly policy or donates to animal welfare causes.
 </ResponseField>
 
 <ResponseField name="utilityCode" type="String">
@@ -191,7 +191,7 @@ type BusinessPlan {
 </ResponseField>
 
 <ResponseField name="supplier" type="Supplier!" required>
-  The supplier offering this plan. See [`Supplier`](#supplier).
+  The provider offering this plan. See [`Supplier`](#supplier).
 </ResponseField>
 
 <ResponseField name="agreementUrl" type="String!" required>
@@ -228,7 +228,7 @@ type PlanRate {
 </ResponseField>
 
 <ResponseField name="advertisedPriceUsdPerKwh" type="Float!" required>
-  The supplier's published EFL price in $/kWh at this fixed usage benchmark, not adjusted for how a customer's usage varies across the year.
+  The provider's published EFL price in $/kWh at this fixed usage benchmark, not adjusted for how a customer's usage varies across the year.
 </ResponseField>
 
 <ResponseField name="allInRateUsdPerKwh" type="Float!" required>
@@ -302,7 +302,7 @@ type RuleEntry {
 
 ### Supplier
 
-The retail electricity provider (REP) offering a plan.
+The retail electricity provider offering a plan.
 
 ```graphql
 type Supplier {
@@ -315,11 +315,11 @@ type Supplier {
 ```
 
 <ResponseField name="id" type="ID!" required>
-  Unique identifier for the supplier in the PowerHQ system.
+  Unique identifier for the provider in the PowerHQ system.
 </ResponseField>
 
 <ResponseField name="name" type="String!" required>
-  Full legal or trade name of the supplier.
+  Full legal or trade name of the provider.
 </ResponseField>
 
 <ResponseField name="shortName" type="String">
@@ -327,18 +327,18 @@ type Supplier {
 </ResponseField>
 
 <ResponseField name="logoUrl" type="String!" required>
-  URL to the supplier's logo image (PNG or SVG).
+  URL to the provider's logo image (PNG or SVG).
 </ResponseField>
 
 <ResponseField name="registrationId" type="String">
-  Regulatory registration or license number for the supplier. Nullable.
+  Regulatory registration or license number for the provider. Nullable.
 </ResponseField>
 
 ---
 
 ### SupplierScores
 
-Aggregated ratings for a supplier across several dimensions. The entire `supplierScores` object is nullable on `ResidentialPlan` — it is absent when the supplier has no ratings on file. Individual category fields within this type may also be independently null.
+Aggregated ratings for a provider across several dimensions. The entire `supplierScores` object is nullable on `ResidentialPlan` — it is absent when the provider has no ratings on file. Individual category fields within this type may also be independently null.
 
 ```graphql
 type SupplierScores {
@@ -351,11 +351,11 @@ type SupplierScores {
 ```
 
 <ResponseField name="powerHqRating" type="Float">
-  Overall PowerHQ composite score for the supplier. Nullable.
+  Overall PowerHQ composite score for the provider. Nullable.
 </ResponseField>
 
 <ResponseField name="plansAndRates" type="Float">
-  Score reflecting the quality and competitiveness of the supplier's plan offerings. Nullable.
+  Score reflecting the quality and competitiveness of the provider's plan offerings. Nullable.
 </ResponseField>
 
 <ResponseField name="customerService" type="Float">
@@ -363,7 +363,7 @@ type SupplierScores {
 </ResponseField>
 
 <ResponseField name="renewablePlans" type="Float">
-  Score reflecting the availability and quality of the supplier's renewable energy options. Nullable.
+  Score reflecting the availability and quality of the provider's renewable energy options. Nullable.
 </ResponseField>
 
 <ResponseField name="pucRating" type="Float">
@@ -420,7 +420,7 @@ type PlanTag {
 </ResponseField>
 
 <ResponseField name="value" type="String">
-  The supplier's own description of the benefit, and in practice the field to display. For
+  The provider's own description of the benefit, and in practice the field to display. For
   `SATISFACTION_GUARANTEE` it carries the guarantee terms; for `RATE_DISCOUNT` it can carry a
   bracketed list of time-of-use rates. Nullable, and `null` for tags that need no elaboration such as
   `AUTO_PAY`.

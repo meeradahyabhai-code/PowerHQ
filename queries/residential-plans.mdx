@@ -1,10 +1,10 @@
 ---
 title: "residentialPlans: Fetch Retail Electricity Plans by ZIP"
 sidebarTitle: "residentialPlans"
-description: "Query retail electricity plans for a U.S. residential address by ZIP code or utility ID, with usage-based pricing, supplier scores, and enrollment URLs."
+description: "Query retail electricity plans for a U.S. residential address by ZIP code or utility ID, with usage-based pricing, provider scores, and enrollment URLs."
 ---
 
-The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, supplier reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
+The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, provider reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
 
 ## Parameters
 
@@ -119,7 +119,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ResponseField>
 
 <ResponseField name="isPetFriendly" type="Boolean">
-  `true` if the supplier has designated this plan as pet-friendly (no deposit required for customers with pets, per supplier policy).
+  `true` if the provider has designated this plan as pet-friendly (no deposit required for customers with pets, per provider policy).
 </ResponseField>
 
 <ResponseField name="enrollmentUrl" type="String">
@@ -163,27 +163,27 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ResponseField>
 
 <ResponseField name="supplier" type="Supplier">
-  The retail electricity supplier offering this plan.
+  The retail electricity provider offering this plan.
 
   <Expandable title="supplier fields">
     <ResponseField name="id" type="ID">
-      Unique identifier for the supplier.
+      Unique identifier for the provider.
     </ResponseField>
 
     <ResponseField name="name" type="String">
-      Full legal name of the supplier.
+      Full legal name of the provider.
     </ResponseField>
 
     <ResponseField name="shortName" type="String">
-      Abbreviated or display name of the supplier, suitable for UI labels.
+      Abbreviated or display name of the provider, suitable for UI labels.
     </ResponseField>
 
     <ResponseField name="logoUrl" type="String">
-      URL of the supplier's logo image.
+      URL of the provider's logo image.
     </ResponseField>
 
     <ResponseField name="registrationId" type="String">
-      Regulatory registration or license ID for the supplier. May be `null` when not available.
+      Regulatory registration or license ID for the provider. May be `null` when not available.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -197,7 +197,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
     </ResponseField>
 
     <ResponseField name="advertisedPriceUsdPerKwh" type="Float">
-      The supplier's published EFL price in $/kWh at this fixed usage benchmark, not adjusted for how a customer's usage varies across the year.
+      The provider's published EFL price in $/kWh at this fixed usage benchmark, not adjusted for how a customer's usage varies across the year.
     </ResponseField>
 
     <ResponseField name="allInRateUsdPerKwh" type="Float">
@@ -211,15 +211,15 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ResponseField>
 
 <ResponseField name="supplierScores" type="SupplierScores">
-  Supplier reputation scores sourced independently from plan pricing. This field is **nullable** — it is `null` when score data is unavailable for a supplier.
+  Provider reputation scores sourced independently from plan pricing. This field is **nullable** — it is `null` when score data is unavailable for a provider.
 
   <Expandable title="supplierScores fields">
     <ResponseField name="powerHqRating" type="Float">
-      Overall PowerHQ rating for the supplier, on a scale of 0–5. Nullable.
+      Overall PowerHQ rating for the provider, on a scale of 0–5. Nullable.
     </ResponseField>
 
     <ResponseField name="plansAndRates" type="Float">
-      Score reflecting the competitiveness and clarity of the supplier's plans and rates, on a scale of 0–5. Nullable.
+      Score reflecting the competitiveness and clarity of the provider's plans and rates, on a scale of 0–5. Nullable.
     </ResponseField>
 
     <ResponseField name="customerService" type="Float">
@@ -227,7 +227,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
     </ResponseField>
 
     <ResponseField name="renewablePlans" type="Float">
-      Score reflecting the breadth and quality of the supplier's renewable energy offerings, on a scale of 0–5. Nullable.
+      Score reflecting the breadth and quality of the provider's renewable energy offerings, on a scale of 0–5. Nullable.
     </ResponseField>
 
     <ResponseField name="pucRating" type="Float">
@@ -237,7 +237,7 @@ The `residentialPlans` query returns a list of available retail electricity plan
 </ResponseField>
 
 <ResponseField name="feeBreakdown" type="PlanFee[]">
-  List of individual fees that make up the plan's cost structure. Every residential plan includes an `ENERGY_CHARGE` entry, the supplier's raw energy charge in $/kWh, alongside the TDU delivery charges, bill credits and usage fees that apply to that plan. See [Fee breakdown](/concepts/pricing#fee-breakdown).
+  List of individual fees that make up the plan's cost structure. Every residential plan includes an `ENERGY_CHARGE` entry, the provider's raw energy charge in $/kWh, alongside the TDU delivery charges, bill credits and usage fees that apply to that plan. See [Fee breakdown](/concepts/pricing#fee-breakdown).
 
   <Note>
     `feeBreakdown` may be an empty array if no itemized fees are available. Individual fee entries may include a `rules` array that is also empty.

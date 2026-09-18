@@ -1,28 +1,28 @@
 ---
-title: "PowerHQ Plan Data API: Get Started With Your First Query"
+title: "PowerHQ API: Get Started With Your First Query"
 sidebarTitle: "Quickstart"
-description: "Make your first PowerHQ API call in minutes — fetch live utility data and real residential electricity plan pricing from a single GraphQL endpoint."
+description: "Make your first PowerHQ API call in minutes — look up a utility and fetch residential electricity plan pricing from a single GraphQL endpoint."
 ---
 
-This guide walks you through everything you need to go from zero to live plan data. By the end you'll have sent your first request to the API, retrieved the utility serving a ZIP code, and fetched real residential electricity plans complete with pricing tiers and an enrollment URL.
+This guide walks you through everything you need to go from zero to plan data. By the end you'll have sent your first request to the API, retrieved the utility serving a ZIP code, and fetched residential electricity plans complete with pricing tiers and an enrollment URL.
 
 <Steps>
 
   <Step title="Get your credentials">
     You need one thing: **an API key**, a static secret you send on every request in the `x-api-key` HTTP header. It works from serverless functions, containers and CI just as well as from a fixed server.
 
-    Contact your PowerHQ representative to receive your key. Want to run real queries before you have one? The [playground](/playground) needs no key at all.
+    Contact your partner manager to receive your key. Want to run real queries before you have one? The [sandbox](/playground) needs no key at all and runs on live production plans.
   </Step>
 
   <Step title="Choose your environment">
-    PowerHQ provides two identical endpoints. Use **Certification** while you build and test your integration, then point to **Production** when you go live.
+    PowerHQ provides two endpoints. Use **Sandbox** while you build and test your integration. It returns test plans, not live prices. Point to **Production** when you go live.
 
     | Environment | Endpoint |
     |---|---|
     | Production | `https://eapi.prod.powerhq.co/graphql` |
-    | Certification (staging) | `https://eapi.cert.powerhq.co/graphql` |
+    | Sandbox | `https://eapi.cert.powerhq.co/graphql` |
 
-    All code examples in this guide use the Certification endpoint. Swap the hostname when you're ready for production traffic.
+    All code examples in this guide use the Sandbox endpoint. Swap the hostname when you're ready for production traffic.
   </Step>
 
   <Step title="Send your first request">
@@ -54,7 +54,7 @@ This guide walks you through everything you need to go from zero to live plan da
   </Step>
 
   <Step title="Fetch residential plans">
-    Now query for residential plans. The example below requests plans for ZIP code 77002 (Houston, TX) sized for a customer using 1,000 kWh per month. It asks for the plan title, base price, contract term, rate type, supplier name, tiered rate details, and a ready-to-use enrollment URL.
+    Now query for residential plans. The example below requests plans for ZIP code 77002 (Houston, TX) sized for a customer using 1,000 kWh per month. It asks for the plan title, base price, contract term, rate type, provider name, tiered rate details, and a ready-to-use enrollment URL.
 
     ```graphql
     {
@@ -111,7 +111,7 @@ This guide walks you through everything you need to go from zero to live plan da
     }
     ```
 
-    The `headlessEnrollmentUrl` takes a customer directly into the enrollment flow for that plan. Replace `YOUR_PARTNER_CODE` with the partner code provided by your PowerHQ representative before surfacing these URLs to customers.
+    The `headlessEnrollmentUrl` takes a customer directly into the enrollment flow for that plan. Replace `YOUR_PARTNER_CODE` with the partner code provided by your partner manager before surfacing these URLs to customers.
   </Step>
 
 </Steps>

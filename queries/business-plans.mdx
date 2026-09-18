@@ -4,7 +4,7 @@ sidebarTitle: "businessPlans"
 description: "Query commercial electricity plans for a U.S. business location by ZIP code, with usage-based pricing, monthly fees, and partner-stamped enrollment URLs."
 ---
 
-The `businessPlans` query returns available retail electricity plans for a U.S. commercial service location identified by ZIP code. Provide your customer's annual usage to receive accurate usage-based pricing, indicate whether the request is for new service or a switch, and optionally pass a desired start date. Each plan in the response includes the supplier, contract term, per-kWh price, monthly fee, renewable percentage, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
+The `businessPlans` query returns available retail electricity plans for a U.S. commercial service location identified by ZIP code. Provide your customer's annual usage to receive accurate usage-based pricing, indicate whether the request is for new service or a switch, and optionally pass a desired start date. Each plan in the response includes the provider, contract term, per-kWh price, monthly fee, renewable percentage, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
 
 ## Parameters
 
@@ -13,7 +13,7 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
 </ParamField>
 
 <ParamField query="annualUsageInkWh" type="Float">
-  Annual electricity usage in kWh for the business. Supplying this value ensures that the returned `price` reflects the supplier's rate at the customer's actual usage level. Omit only when usage is unknown.
+  Annual electricity usage in kWh for the business. Supplying this value ensures that the returned `price` reflects the provider's rate at the customer's actual usage level. Omit only when usage is unknown.
 </ParamField>
 
 <ParamField query="isMoveIn" type="Boolean">
@@ -85,27 +85,27 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
 </ResponseField>
 
 <ResponseField name="supplier" type="Supplier">
-  The retail electricity supplier offering this plan.
+  The retail electricity provider offering this plan.
 
   <Expandable title="supplier fields">
     <ResponseField name="id" type="ID">
-      Unique identifier for the supplier.
+      Unique identifier for the provider.
     </ResponseField>
 
     <ResponseField name="name" type="String">
-      Full legal name of the supplier.
+      Full legal name of the provider.
     </ResponseField>
 
     <ResponseField name="shortName" type="String">
-      Abbreviated or display name of the supplier, suitable for UI labels. May be `null`.
+      Abbreviated or display name of the provider, suitable for UI labels. May be `null`.
     </ResponseField>
 
     <ResponseField name="logoUrl" type="String">
-      URL of the supplier's logo image.
+      URL of the provider's logo image.
     </ResponseField>
 
     <ResponseField name="registrationId" type="String">
-      Regulatory registration or license ID for the supplier. May be `null` when not available.
+      Regulatory registration or license ID for the provider. May be `null` when not available.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -119,7 +119,7 @@ The `businessPlans` query returns available retail electricity plans for a U.S. 
 </ResponseField>
 
 <ResponseField name="agreementUrl" type="String">
-  Direct URL to the supplier's contract PDF for this plan. Display or download this document so the customer can review the full terms of service before enrolling.
+  Direct URL to the provider's contract PDF for this plan. Display or download this document so the customer can review the full terms of service before enrolling.
 </ResponseField>
 
 <Tip>

@@ -43,7 +43,7 @@
             ]
           },
           {
-            "group": "Plan Data API",
+            "group": "PowerHQ API",
             "pages": [
               "introduction",
               "quickstart",
@@ -72,7 +72,7 @@
             ]
           },
           {
-            "group": "Playground",
+            "group": "Sandbox",
             "pages": [
               "playground",
               "playground-access"

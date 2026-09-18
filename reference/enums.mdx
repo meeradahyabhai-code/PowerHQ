@@ -1,10 +1,10 @@
 ---
-title: "PowerHQ Plan Data API: GraphQL Enum Values Reference"
+title: "PowerHQ API: GraphQL Enum Values Reference"
 sidebarTitle: "Enums"
-description: "Reference for all GraphQL enums in the PowerHQ Plan Data API, covering rate types, fee categories, document link types, and utility account statuses."
+description: "Reference for all GraphQL enums in the PowerHQ API, covering rate types, fee categories, document link types, and utility account statuses."
 ---
 
-The PowerHQ Plan Data API uses several enum types to represent discrete, well-defined sets of values across plan rates, fee structures, document categories, and account status. Each enum value is a string constant returned exactly as shown — your integration should handle unknown values gracefully in case new values are added in future API versions.
+The PowerHQ API uses several enum types to represent discrete, well-defined sets of values across plan rates, fee structures, document categories, and account status. Each enum value is a string constant returned exactly as shown — your integration should handle unknown values gracefully in case new values are added in future API versions.
 
 ---
 
@@ -65,15 +65,15 @@ Used on `PlanDocument.type`. Identifies the category of a regulatory or disclosu
 | Value | Description |
 |-------|-------------|
 | `EFL` | Electricity Facts Label — a standardized one-page disclosure required for retail plans in Texas. |
-| `TOS` | Terms of Service — the full legal contract between the customer and the supplier. |
+| `TOS` | Terms of Service — the full legal contract between the customer and the provider. |
 | `YRAC` | Your Rights as a Customer — a Texas-mandated consumer rights document. |
-| `ENROLLMENT` | A link to the supplier's own enrollment website, distinct from the PowerHQ-hosted enrollment flow. |
+| `ENROLLMENT` | A link to the provider's own enrollment website, distinct from the PowerHQ-hosted enrollment flow. |
 | `PREPAID_DISCLOSURE_STATEMENT` | Disclosure statement specific to prepaid electricity plans. |
 | `CONTRACT_SUMMARY` | Condensed contract summary document, required in Pennsylvania and certain other states. |
 | `ENVIRONMENTAL_DISCLOSURE` | Document disclosing the fuel mix and environmental attributes of the plan's electricity supply. |
 | `ARBITRATION_ADDENDUM` | Addendum describing the binding arbitration clause and process. |
-| `COMM_POLICY` | Communication policy document describing how the supplier contacts customers. |
-| `PAYMENT_TERMS` | Document specifying the supplier's payment terms, due dates, and late-payment policies. |
+| `COMM_POLICY` | Communication policy document describing how the provider contacts customers. |
+| `PAYMENT_TERMS` | Document specifying the provider's payment terms, due dates, and late-payment policies. |
 
 ---
 
@@ -90,7 +90,7 @@ Used on `PlanFee.applicability`. Describes when and how a specific fee or credit
 | `MONTHLY_ABOVE_USAGE` | A flat monthly charge that applies only when usage exceeds the `threshold` value. |
 | `CREDIT_MONTHLY_ABOVE_USAGE` | A monthly credit (negative charge) applied when usage exceeds the `threshold` value. |
 | `CREDIT_MONTHLY_BELOW_USAGE` | A monthly credit (negative charge) applied when usage falls below the `threshold` value. |
-| `SCHEDULE` | Charge is applied according to a supplier-defined schedule as specified in the service agreement. |
+| `SCHEDULE` | Charge is applied according to a provider-defined schedule as specified in the service agreement. |
 | `DEVICE` | Charge associated with a specific device enrolled on the plan (e.g., smart thermostat, EV charger). |
 | `PER_KW` | Charge based on peak kilowatt demand rather than total kWh consumption. |
 
@@ -108,7 +108,7 @@ Used on `PlanFee.feeType`. Identifies the nature of a specific fee or credit lin
 
 | Value | Description |
 |-------|-------------|
-| `ENERGY_CHARGE` | The supplier's raw energy charge in $/kWh, before utility delivery charges are added. Always carries `applicability: PER_KWH`. |
+| `ENERGY_CHARGE` | The provider's raw energy charge in \$/kWh, before utility delivery charges are added. Always carries `applicability: PER_KWH`. |
 | `UTILITY_PASS_THRU` | Utility delivery, transmission, or distribution charges passed through directly to the customer. |
 | `MSDF_UTILITY_PASS_THRU` | Meter Systems Development Fee — a specific utility pass-through charge for metering infrastructure. |
 | `BASE_CHARGE` | A fixed monthly base or customer charge applied regardless of usage. |

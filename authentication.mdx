@@ -8,7 +8,7 @@ Authentication is a single step: put your **API key** in the `x-api-key` header.
 
 ## Your API Key
 
-Pass your API key in the `x-api-key` HTTP header on every request. The key is a static secret issued by your PowerHQ representative; treat it like a password and never expose it in client-side code or public repositories.
+Pass your API key in the `x-api-key` HTTP header on every request. The key is a static secret issued by your partner manager; treat it like a password and never expose it in client-side code or public repositories.
 
 <CodeGroup>
 
@@ -66,32 +66,31 @@ mobile app, or a public repository. If you need something a browser can call, pu
 your own in front of it and keep the key on the proxy.
 
 <Tip>
-  Want to try the API before you have a key at all? The [playground](/playground) runs real queries
-  against production with no key and no signup.
+  Want to try the API before you have a key at all? The [sandbox](/playground) runs real queries against live production plans with no key and no signup.
 </Tip>
 
 ## Environments
 
-Both environments enforce the same authentication requirements. Use Certification while you build and test; switch to Production for live customer traffic.
+Both environments enforce the same authentication requirements, with a separate key for each. Use Sandbox while you build and test. It returns test plans, not live prices. Switch to Production for live customer traffic.
 
 | Environment | Endpoint | Intended Use |
 |---|---|---|
 | Production | `https://eapi.prod.powerhq.co/graphql` | Live traffic serving real customers |
-| Certification (staging) | `https://eapi.cert.powerhq.co/graphql` | Development, integration testing, and QA |
+| Sandbox | `https://eapi.cert.powerhq.co/graphql` | Development, integration testing, and QA |
 
 <Tip>
-  Point your integration at the Certification environment during development. It lets you iterate safely without risking any impact to production data or customer-facing systems.
+  Point your integration at the Sandbox environment during development. It lets you iterate safely without risking any impact to production data or customer-facing systems.
 </Tip>
 
 Onboarding asks for the IP addresses your team will be testing from, so we can enable them for the
-certification checkout flow. Sending them early keeps your first end-to-end test from waiting on us.
+sandbox checkout flow. Sending them early keeps your first end-to-end test from waiting on us.
 
 ## Error Responses
 
 ### 403 Forbidden
 
 <Warning>
-  A `403 Forbidden` response means the `x-api-key` header is missing, malformed, or not a valid key for that environment. Check that the header is present, that the key has no stray whitespace, and that you are using the right key for the environment you are calling — staging and production keys are different.
+  A `403 Forbidden` response means the `x-api-key` header is missing, malformed, or not a valid key for that environment. Check that the header is present, that the key has no stray whitespace, and that you are using the right key for the environment you are calling — sandbox and production keys are different.
 </Warning>
 
 ### 400 Bad Request

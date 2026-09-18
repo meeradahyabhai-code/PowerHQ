@@ -5,7 +5,7 @@ description: "How the Storefront embed works: the link structure, every paramete
 ---
 
 The Storefront is our energy shopping and enrollment experience, running inside a page on your site.
-Visitors compare plans, sign up and complete enrollment without leaving you. PowerHQ handles supplier
+Visitors compare plans, sign up and complete enrollment without leaving you. PowerHQ handles provider
 relationships, compliance, enrollment operations and customer service behind it.
 
 **No developer required.** It goes on a page the same way a YouTube video or a Google Map does: one
@@ -23,7 +23,7 @@ tuning placements, not work you have to do to launch.
 Your partner manager sends you a pre-built link. Every Storefront link follows the same shape, and
 knowing the pieces lets you run different placements on different pages.
 
-```
+```text
 https://www.powerhq.co/partner-app.html?utm_source=[PARTNER_CODE]&utm_medium=referral&utm_campaign=[CAMPAIGN]#/[partner_code]?ftype=DEFAULT_PARTNER&service_type=[TYPE]&zip_code=[ZIP]
 ```
 
@@ -37,7 +37,7 @@ https://www.powerhq.co/partner-app.html?utm_source=[PARTNER_CODE]&utm_medium=ref
 | `service_type=[TYPE]` | Optional. `BUSINESS` or `RESIDENTIAL` to limit a placement to one customer type. Omit to support both. |
 | `zip_code=[ZIP]` | Optional. Pre-loads a ZIP you have already collected. |
 
-The test environment uses the same structure on `www.dev.powerhq.co`. Production links are identical
+The sandbox uses the same structure on `www.dev.powerhq.co`. Production links are identical
 apart from the domain.
 
 <Warning>
@@ -67,7 +67,7 @@ and mobile rather than pinning it to a fixed pixel width.
 If you already collect a ZIP on your site, pass it in and the customer lands straight on plan results
 for their area instead of typing it again.
 
-```
+```text
 &zip_code=75035
 ```
 
@@ -99,7 +99,7 @@ Onboarding collects the IP addresses your team will be testing from so we can en
 Sending them early keeps your first run-through from waiting on us. Your live Storefront is open to
 everyone, as you would expect.
 
-Put the iframe on a staging page and run the flow as a customer would. Confirm:
+Put the iframe on a test page and run the flow as a customer would. Confirm:
 
 <Steps>
   <Step title="It renders at every width">
@@ -143,7 +143,4 @@ Customer Name, UTM Campaign, Referral Code, Term Length, Start Date, Annual Usag
 
 ## Compare with the API
 
-The Storefront is the recommended path for most partners. If the energy experience has to live
-natively inside a product you already maintain, see the
-[Plan Data API](/introduction) instead, or
-[compare the two side by side](/integrations).
+The Storefront is the recommended path for most partners. If the energy experience has to live natively inside a product you already maintain, see the [PowerHQ API](/introduction) instead, or [compare the two side by side](/integrations).
