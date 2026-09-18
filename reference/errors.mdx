@@ -19,7 +19,7 @@ HTTP errors occur at the transport layer and mean the API never processed your G
 | `429 Too Many Requests` | Your API key exceeded its limit of 100,000 requests per month | See [Rate limits](#rate-limits). |
 
 <Warning>
-  A `403 Forbidden` means the `x-api-key` header is missing, malformed, or not valid for that environment. Sandbox and production keys are different, so a key that works against the sandbox will 403 against production.
+  A `403 Forbidden` means the `x-api-key` header is missing, malformed, or not valid for that environment. Sandbox and production keys are different, so a key that works against the Sandbox environment will 403 against production.
 </Warning>
 
 ---

@@ -1,12 +1,12 @@
 ---
-title: "Using the sandbox"
-description: "What the free sandbox can run, its limits, and how to call it from code or an AI agent without a key."
+title: "Using the public sandbox"
+description: "What the free public sandbox can run, its limits, and how to call it from code or an AI agent without a key."
 ---
 
-The [sandbox](/playground) is backed by a public endpoint that needs no API key, no signup and no browser. It runs on live production plans, so what you see is what your customers see. Anything you can run in the sandbox, you can run from a script or an AI coding assistant.
+The [public sandbox](/playground) is backed by a public endpoint that needs no API key, no signup and no browser. It runs on live production plans, so what you see is what your customers see. Anything you can run in the public sandbox, you can run from a script or an AI coding assistant.
 
 <Info>
-  **10 free calls per IP.** Loading the sandbox and browsing the schema are free — only real queries count against it. It is a one-time allowance, not a daily one, so it is meant for evaluating the data rather than running a workload. [Request an API key](mailto:support@powerhq.co) to call production directly.
+  **10 free calls per IP.** Loading the public sandbox and browsing the schema are free — only real queries count against it. It is a one-time allowance, not a daily one, so it is meant for evaluating the data rather than running a workload. [Request an API key](mailto:support@powerhq.co) to call production directly.
 </Info>
 
 ## What you can run
@@ -21,7 +21,7 @@ The [sandbox](/playground) is backed by a public endpoint that needs no API key,
 
 ## What it will not run
 
-`utilityAccounts` is **not available** in the public sandbox. It looks up real customer service accounts by street address, so it stays behind an issued API key. The sandbox is read-only:
+`utilityAccounts` is **not available** in the public sandbox. It looks up real customer service accounts by street address, so it stays behind an issued API key. The public sandbox is read-only:
 mutations and subscriptions are rejected.
 
 ## Calling it from code
