@@ -1,5 +1,5 @@
 ---
-title: "Enrollment URLs, Partner Attribution, and Supplier Links"
+title: "Enrollment URLs, Partner Attribution, and Provider Links"
 sidebarTitle: "Enrollment"
 description: "Understand the two partner-stamped enrollment URLs on every plan and how attribution works so your conversions are tracked back to your account."
 ---
@@ -11,7 +11,7 @@ Every plan returned by the API includes two partner-stamped enrollment URLs you 
 `enrollmentUrl` links to a full-page, PowerHQ-hosted enrollment flow. Use this when you want to redirect the customer to a standalone page managed entirely by PowerHQ. Your partner code is embedded in the URL as both the `utm_source` and `ref` query parameters, so every completed enrollment is attributed to you.
 
 <Tip>
-The hosted flow is the fastest integration path. Drop the URL into a button or link and PowerHQ handles the rest — plan display, customer information collection, and supplier hand-off.
+The hosted flow is the fastest integration path. Drop the URL into a button or link and PowerHQ handles the rest — plan display, customer information collection, and provider hand-off.
 </Tip>
 
 ## Headless enrollment (headlessEnrollmentUrl)
@@ -64,12 +64,12 @@ The service address is attached through the customer's utility account, not thro
   Pass the `accountNumber`, not the account's `id`. `utilityAccounts` returns both, and sending the `v2-` prefixed `id` as `utilityAccountNumber` is accepted but attaches nothing — the link comes back without `prospect_id` and no error is raised. The `address` argument behaves the same way. Only `accountNumber` resolves.
 </Warning>
 
-## Supplier enrollment link
+## Provider enrollment link
 
-Some plans include a `LinkType.ENROLLMENT` entry inside the `documents[]` array. This entry points directly to the **supplier's own website** and is not a PowerHQ-hosted flow.
+Some plans include a `LinkType.ENROLLMENT` entry inside the `documents[]` array. This entry points directly to the **provider's own website** and is not a PowerHQ-hosted flow.
 
 <Warning>
-The `documents[]` enrollment link is **not** guaranteed to be present on every plan. Do not rely on it as your primary enrollment path. Use `enrollmentUrl` or `headlessEnrollmentUrl` for a consistent, partner-attributed experience. The supplier link is best treated as a fallback or reference only.
+The `documents[]` enrollment link is **not** guaranteed to be present on every plan. Do not rely on it as your primary enrollment path. Use `enrollmentUrl` or `headlessEnrollmentUrl` for a consistent, partner-attributed experience. The provider link is best treated as a fallback or reference only.
 </Warning>
 
 ## Attribution
