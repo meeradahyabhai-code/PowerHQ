@@ -75,7 +75,8 @@
             "group": "Public sandbox",
             "pages": [
               "playground",
-              "playground-access"
+              "playground-access",
+              "experience-builder"
             ]
           },
           {
