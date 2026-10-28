@@ -4,7 +4,7 @@ sidebarTitle: "residentialPlans"
 description: "Query retail electricity plans for a U.S. residential address by ZIP code or utility ID, with usage-based pricing, provider scores, and enrollment URLs."
 ---
 
-The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, provider reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility, and handle the ZIP code to utility mapping within your system.
+The `residentialPlans` query returns a list of available retail electricity plans for a U.S. residential service location. Supply a ZIP code or a utility ID to scope results to the correct service territory, then tune pricing with `monthlyUsage` and `priceType`. Each plan in the response includes rate breakdowns at multiple usage levels, provider reputation scores, document links, fee details, and ready-to-use enrollment URLs stamped with your partner code. Query once per utility each hour, about 10 minutes past the hour, and handle the ZIP code to utility mapping within your system. Pricing refreshes at the top of every hour.
 
 ## Parameters
 
