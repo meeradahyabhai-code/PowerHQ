@@ -32,6 +32,27 @@ The URL contains:
 - `plan_id` — the unique plan identifier from the API
 - `zip_code` — the customer's ZIP code passed through from your query
 
+### Embedding in an iframe
+
+Set `headlessEnrollmentUrl` as the iframe `src`, exactly as the API returns it:
+
+```html
+<iframe
+  src="HEADLESS_ENROLLMENT_URL"
+  title="Electricity plan enrollment"
+  style="width:100%; height:900px; border:0; display:block;">
+</iframe>
+```
+
+| Property | Value |
+| --- | --- |
+| `width` | `100%`. Checkout is responsive. |
+| `height` | Required. `800px` to `900px` on desktop. On mobile, `90vh` with `min-height: 650px`. |
+
+Without a height, browsers render an iframe at 150px and only the header is visible. Checkout scrolls inside the height you set. Leave CSS `zoom` and `transform: scale()` off the iframe, because they shrink the text and checkout still scrolls.
+
+The `headlessEnrollmentUrl` from [`residentialEnrollmentUrl`](/queries/residential-enrollment-url) and [`businessEnrollmentUrl`](/queries/business-enrollment-url) embeds the same way, with the customer's details prefilled.
+
 ## Prefilling the enrollment
 
 The URLs on a plan start the customer at the beginning of checkout. When you already know something about the customer, [`residentialEnrollmentUrl`](/queries/residential-enrollment-url) and [`businessEnrollmentUrl`](/queries/business-enrollment-url) build a link that carries it, so they do not type it twice.
